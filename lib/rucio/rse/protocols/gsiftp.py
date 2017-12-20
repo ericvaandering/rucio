@@ -13,6 +13,7 @@
  - Cedric Serfon, <cedric.serfon@cern.ch>, 2016-2017
  - Mario Lassnig, <mario.lassnig@cern.ch>, 2017
 '''
+from __future__ import print_function
 
 import json
 import os
@@ -82,12 +83,12 @@ class Default(protocol.RSEProtocol):
                 data = json.load(data_file)
                 data_file.close()
                 if agis_token not in data.keys():
-                    print 'ERROR: space usage json has different token as key'
+                    print('ERROR: space usage json has different token as key')
                 else:
                     totalsize = int(data[agis_token]['total_space'])
                     used = int(data[agis_token]['used_space'])
                     unusedsize = totalsize - used
                     return totalsize, unusedsize
         except Exception as error:
-            print error
+            print(error)
             raise exception.ServiceUnavailable(error)

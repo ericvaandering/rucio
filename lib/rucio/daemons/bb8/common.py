@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Copyright European Organization for Nuclear Research (CERN)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -64,11 +65,11 @@ def rebalance_rule(parent_rule_id, activity, rse_expression, priority, source_re
                 concurrent_replica = True
     except Exception as error:
         concurrent_replica = True
-        print 'Exception: get_dataset_locks not feasible for %s %s:' % (parent_rule['scope'], parent_rule['name'])
+        print('Exception: get_dataset_locks not feasible for %s %s:' % (parent_rule['scope'], parent_rule['name']))
         raise error
     if concurrent_replica:
         return 'Concurrent replica exists at target rse!'
-    print concurrent_replica
+    print(concurrent_replica)
 
     child_rule = add_rule(dids=[{'scope': parent_rule['scope'],
                                  'name': parent_rule['name']}],
@@ -196,13 +197,13 @@ def rebalance_rse(rse, max_bytes=1E9, max_files=None, dry_run=False, exclude_exp
     rebalanced_datasets = []
     rse_attributes = list_rse_attributes(rse=rse, session=session)
 
-    print '***************************'
-    print 'BB8 - Execution Summary'
-    print 'Mode:    %s' % ('STANDARD' if mode is None else mode.upper())
-    print 'Dry Run: %s' % (dry_run)
-    print '***************************'
+    print('***************************')
+    print('BB8 - Execution Summary')
+    print('Mode:    %s' % ('STANDARD' if mode is None else mode.upper()))
+    print('Dry Run: %s' % (dry_run))
+    print('***************************')
 
-    print 'scope:name rule_id bytes(Gb) target_rse child_rule_id'
+    print('scope:name rule_id bytes(Gb) target_rse child_rule_id')
 
     for scope, name, rule_id, rse_expression, subscription_id, bytes, length in list_rebalance_rule_candidates(rse=rse, mode=mode):
         if force_expression is not None and subscription_id is not None:
@@ -239,16 +240,16 @@ def rebalance_rse(rse, max_bytes=1E9, max_files=None, dry_run=False, exclude_exp
                     child_rule_id = ''
             except (InsufficientTargetRSEs, DuplicateRule, RuleNotFound, InsufficientAccountLimit):
                 continue
-            print '%s:%s %s %d %s %s' % (scope, name, str(rule_id), int(bytes / 1E9), target_rse_exp, child_rule_id)
+            print('%s:%s %s %d %s %s' % (scope, name, str(rule_id), int(bytes / 1E9), target_rse_exp, child_rule_id))
             if 'Concurrent' in str(child_rule_id):
-                print str(child_rule_id)
+                print(str(child_rule_id))
                 continue
             rebalanced_bytes += bytes
             rebalanced_files += length
             rebalanced_datasets.append((scope, name, bytes, length, target_rse_exp, rule_id, child_rule_id))
         except Exception as error:
-            print 'Exception %s occured while rebalancing %s:%s, rule_id: %s!' % (str(error), scope, name, str(rule_id))
+            print('Exception %s occured while rebalancing %s:%s, rule_id: %s!' % (str(error), scope, name, str(rule_id)))
             raise error
 
-    print 'BB8 is rebalancing %d Gb of data (%d rules)' % (int(rebalanced_bytes / 1E9), len(rebalanced_datasets))
+    print('BB8 is rebalancing %d Gb of data (%d rules)' % (int(rebalanced_bytes / 1E9), len(rebalanced_datasets)))
     return rebalanced_datasets

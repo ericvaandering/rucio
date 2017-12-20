@@ -10,6 +10,7 @@
 # - Vincent Garonne, <vincent.garonne@cern.ch>, 2012-2017
 
 
+from __future__ import print_function
 from json import dumps, loads
 from logging import getLogger, StreamHandler, DEBUG
 from web import application, ctx, data, Created, InternalError, loadhook, header
@@ -75,14 +76,14 @@ class Meta(RucioController):
 
         try:
             add_key(key=key, key_type=key_type, value_type=value_type, value_regexp=value_regexp, issuer=ctx.env.get('issuer'))
-        except Duplicate, e:
+        except Duplicate as e:
             raise generate_http_error(409, 'Duplicate', e[0][0])
-        except UnsupportedValueType, e:
+        except UnsupportedValueType as e:
             raise generate_http_error(400, 'UnsupportedValueType', e[0][0])
-        except RucioException, e:
+        except RucioException as e:
             raise generate_http_error(500, e.__class__.__name__, e.args[0][0])
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
             raise InternalError(e)
 
         raise Created()
@@ -127,16 +128,16 @@ class Values(RucioController):
 
         try:
             add_value(key=key, value=value, issuer=ctx.env.get('issuer'))
-        except Duplicate, e:
+        except Duplicate as e:
             raise generate_http_error(409, 'Duplicate', e[0][0])
-        except InvalidValueForKey, e:
+        except InvalidValueForKey as e:
             raise generate_http_error(400, 'InvalidValueForKey', e[0][0])
-        except KeyNotFound, e:
+        except KeyNotFound as e:
             raise generate_http_error(400, 'KeyNotFound', e[0][0])
-        except RucioException, e:
+        except RucioException as e:
             raise generate_http_error(500, e.__class__.__name__, e.args[0][0])
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
             raise InternalError(e)
 
         raise Created()

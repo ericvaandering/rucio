@@ -92,7 +92,7 @@ def rule_cleaner(once=False):
                         start = time.time()
                         delete_rule(rule_id=rule_id, nowait=True)
                         logging.debug('rule_cleaner[%s/%s]: deletion of %s took %f' % (heartbeat['assign_thread'], heartbeat['nr_threads'] - 1, rule_id, time.time() - start))
-                    except (DatabaseException, DatabaseError, UnsupportedOperation), e:
+                    except (DatabaseException, DatabaseError, UnsupportedOperation) as e:
                         if match('.*ORA-00054.*', str(e.args[0])):
                             paused_rules[rule_id] = datetime.utcnow() + timedelta(seconds=randint(600, 2400))
                             record_counter('rule.judge.exceptions.LocksDetected')
@@ -106,9 +106,9 @@ def rule_cleaner(once=False):
                         else:
                             logging.error(traceback.format_exc())
                             record_counter('rule.judge.exceptions.%s' % e.__class__.__name__)
-                    except RuleNotFound, e:
+                    except RuleNotFound as e:
                         pass
-        except (DatabaseException, DatabaseError), e:
+        except (DatabaseException, DatabaseError) as e:
             if match('.*QueuePool.*', str(e.args[0])):
                 logging.warning(traceback.format_exc())
                 record_counter('rule.judge.exceptions.%s' % e.__class__.__name__)
@@ -118,7 +118,7 @@ def rule_cleaner(once=False):
             else:
                 logging.critical(traceback.format_exc())
                 record_counter('rule.judge.exceptions.%s' % e.__class__.__name__)
-        except Exception, e:
+        except Exception as e:
             logging.critical(traceback.format_exc())
             record_counter('rule.judge.exceptions.%s' % e.__class__.__name__)
         if once:

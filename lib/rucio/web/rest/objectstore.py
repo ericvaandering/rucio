@@ -10,6 +10,7 @@
 # - Vincent Garonne, <vincent.garonne@cern.ch>, 2016
 
 
+from __future__ import print_function
 import traceback
 from web import application, header, data, loadhook, unloadhook, InternalError, OK
 # from web import application, ctx, header, data, loadhook, unloadhook, InternalError, found, OK
@@ -58,10 +59,10 @@ class ObjectStoreGet(RucioController):
                 if isinstance(result[url], Exception):
                     raise result[url]
                 return result[url]
-        except RucioException, e:
+        except RucioException as e:
             raise generate_http_error(500, e.__class__.__name__, e.args[0])
-        except Exception, e:
-            print traceback.format_exc()
+        except Exception as e:
+            print(traceback.format_exc())
             raise InternalError(e)
         raise OK()
 
@@ -92,10 +93,10 @@ class ObjectStore(RucioController):
                 if isinstance(result[url], Exception):
                     raise result[url]
             return render_json(**result)
-        except RucioException, e:
+        except RucioException as e:
             raise generate_http_error(500, e.__class__.__name__, e.args[0][0])
-        except Exception, e:
-            print traceback.format_exc()
+        except Exception as e:
+            print(traceback.format_exc())
             raise InternalError(e)
 
 
@@ -125,10 +126,10 @@ class ObjectStoreInfo(RucioController):
                 if isinstance(result[url], Exception):
                     raise result[url]
             return render_json(**result)
-        except RucioException, e:
+        except RucioException as e:
             raise generate_http_error(500, e.__class__.__name__, e.args[0][0])
-        except Exception, e:
-            print traceback.format_exc()
+        except Exception as e:
+            print(traceback.format_exc())
             raise InternalError(e)
 
 
@@ -156,10 +157,10 @@ class ObjectStoreRename(RucioController):
             url = parameters['url']
             new_url = parameters['new_url']
             objectstore.rename(url, new_url, rse=rse)
-        except RucioException, e:
+        except RucioException as e:
             raise generate_http_error(500, e.__class__.__name__, e.args[0][0])
-        except Exception, e:
-            print traceback.format_exc()
+        except Exception as e:
+            print(traceback.format_exc())
             raise InternalError(e)
 
         raise OK()

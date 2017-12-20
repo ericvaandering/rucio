@@ -149,7 +149,7 @@ class Receiver(object):
                                 logging.debug("Update request %s update time" % response['request_id'])
                                 set_transfer_update_time(response['external_host'], response['transfer_id'], datetime.datetime.utcnow() - datetime.timedelta(hours=24))
                                 record_counter('daemons.conveyor.receiver.set_transfer_update_time')
-                            except Exception, e:
+                            except Exception as e:
                                 logging.debug("Failed to update transfer's update time: %s" % str(e))
                 except:
                     logging.critical(traceback.format_exc())

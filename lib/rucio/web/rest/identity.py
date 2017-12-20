@@ -10,6 +10,7 @@
  - Vincent Garonne, <vincent.garonne@cern.ch>, 2013-2017
  - Thomas Beermann, <thomas.beermann@cern.ch>, 2017
 '''
+from __future__ import print_function
 
 import json
 
@@ -58,13 +59,13 @@ class UserPass(RucioController):
 
         try:
             add_identity(username, 'userpass', password)
-        except Exception, error:
+        except Exception as error:
             raise InternalError(error)
 
         try:
             add_account_identity(username, 'userpass', account,
                                  email=None, issuer=ctx.env.get('issuer'))
-        except Exception, error:
+        except Exception as error:
             raise InternalError(error)
 
         raise Created()
@@ -92,13 +93,13 @@ class X509(RucioController):
         dn = ctx.env.get('SSL_CLIENT_S_DN')
         try:
             add_identity(dn, 'x509', email=None)
-        except Exception, error:
+        except Exception as error:
             raise InternalError(error)
 
         try:
             add_account_identity(dn, 'x509', account,
                                  email=None, issuer=ctx.env.get('issuer'))
-        except Exception, error:
+        except Exception as error:
             raise InternalError(error)
 
         raise Created()
@@ -126,13 +127,13 @@ class GSS(RucioController):
         gsscred = ctx.env.get('REMOTE_USER')
         try:
             add_identity(gsscred, 'gss', email=None)
-        except Exception, error:
+        except Exception as error:
             raise InternalError(error)
 
         try:
             add_account_identity(gsscred, 'gss', account,
                                  email=None, issuer=ctx.env.get('issuer'))
-        except Exception, error:
+        except Exception as error:
             raise InternalError(error)
 
         raise Created()
@@ -157,9 +158,9 @@ class Accounts(RucioController):
         """
         try:
             return json.dumps(list_accounts_for_identity(identity_key, type))
-        except Exception, error:
-            print error
-            print str(format_exc())
+        except Exception as error:
+            print(error)
+            print(str(format_exc()))
             raise InternalError(error)
 
 

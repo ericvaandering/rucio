@@ -12,6 +12,7 @@
 
 Gets current traffic for all the links.
 """
+from __future__ import print_function
 
 import sys
 
@@ -42,8 +43,8 @@ def get_traffic_from_db():
             link = {'bytes': row[0], 'src_rse': row[1], 'dst_rse': row[2]}
             collector.append(link)
 
-    except Exception, exception:
-        print exception
+    except Exception as exception:
+        print(exception)
         sys.exit()
 
     return collector

@@ -31,14 +31,14 @@ class TestDIDClients(object):
         files = []
         for i in xrange(10):
             files.append({'scope': scope, 'name': 'lfn.%s' % str(generate_uuid()),
-                          'bytes': 724963570L,
+                          'bytes': 724963570,
                           'adler32': '0cc737eb',
                           'type': 'FILE',
                           'meta': {'guid': str(generate_uuid())}})
 
         self.replica_client.add_replicas(rse=rse, files=[{'scope': scope,
                                                           'name': archive_file,
-                                                          'bytes': 1L,
+                                                          'bytes': 1,
                                                           'adler32': '0cc737eb'}])
 
         self.did_client.add_files_to_archive(scope=scope,

@@ -12,6 +12,7 @@
 """
 Test the WebDAV protocol
 """
+from __future__ import print_function
 
 import json
 import os
@@ -69,8 +70,8 @@ class TestRseWebDAV(object):
             destfile = rsemanager.lfns2pfns(rse_settings, [{'name': f, 'scope': 'user.%s' % (cls.user)}, ], operation='write', scheme='https').values()[0]
             try:
                 storage.put('%s/%s' % (cls.tmpdir, f), destfile)
-            except FileReplicaAlreadyExists, e:
-                print e
+            except FileReplicaAlreadyExists as e:
+                print(e)
         with open('%s/data.raw' % cls.tmpdir, 'rb') as f_file:
             session.put(cls.static_file, data=f_file.read(), verify=False, allow_redirects=True)
 
@@ -85,12 +86,12 @@ class TestRseWebDAV(object):
         hostname = data[cls.site]['protocols']['supported']['https']['hostname']
         port = data[cls.site]['protocols']['supported']['https']['port']
         storage = rsemanager.create_protocol(rse_settings, operation='write', scheme='https')
-        print rse_settings
+        print(rse_settings)
         storage.connect()
         status1 = storage.delete('%s://%s:%s%suser/%s' % (scheme, hostname, port, prefix, cls.user))
-        print status1
+        print(status1)
         status2 = storage.delete('%s://%s:%s%sgroup/%s' % (scheme, hostname, port, prefix, cls.user))
-        print status2
+        print(status2)
 
     def setup(self):
         """WebDAV (RSE/PROTOCOLS): Creating Mgr-instance """

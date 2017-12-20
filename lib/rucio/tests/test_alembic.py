@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Copyright European Organization for Nuclear Research (CERN)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,15 +21,15 @@ class TestAlembicMigration():
 
         cmd = 'alembic upgrade head'
         exitcode, out, err = execute(cmd)
-        print cmd
-        print exitcode, out, err
+        print(cmd)
+        print(exitcode, out, err)
         assert_equal(exitcode, 0)
 
         cmd = 'alembic downgrade  -1'
         while exitcode is 0:
             exitcode, out, err = execute(cmd)
-            print cmd
-            print exitcode, out, err
+            print(cmd)
+            print(exitcode, out, err)
             if "Relative revision -1 didn't produce 1 migrations" not in out:
                 assert_equal(exitcode, 0)
             else:
@@ -36,6 +37,6 @@ class TestAlembicMigration():
 
         cmd = 'alembic upgrade head'
         exitcode, out, err = execute(cmd)
-        print cmd
-        print exitcode, out, err
+        print(cmd)
+        print(exitcode, out, err)
         assert_equal(exitcode, 0)

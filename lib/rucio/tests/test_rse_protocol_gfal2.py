@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 # Copyright European Organization for Nuclear Research (CERN)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +20,7 @@ from nose.tools import raises
 
 from rucio.common import exception
 from rucio.rse import rsemanager as mgr
-from rsemgr_api_test import MgrTestCases
+from .rsemgr_api_test import MgrTestCases
 from rucio.common.utils import execute
 
 

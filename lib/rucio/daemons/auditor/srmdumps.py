@@ -66,7 +66,7 @@ def mkdir(dir):
     '''
     try:
         os.mkdir(dir)
-    except OSError, e:
+    except OSError as e:
         assert e.errno == 17
 
 

@@ -11,6 +11,7 @@
  - Mario Lassnig, <mario.lassnig@cern.ch>, 2014
  - Cedric Serfon, <cedric.serfon@cern.ch>, 2017
 '''
+from __future__ import print_function
 
 from os import remove
 
@@ -89,4 +90,4 @@ class TestRucioClients(object):
 
         client = Client(account='root', ca_cert=self.cacert, auth_type='userpass', creds=creds)
 
-        print client.ping()
+        print(client.ping())

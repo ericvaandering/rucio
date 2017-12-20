@@ -44,11 +44,11 @@ class TestReplicaHeaderRedirection:
 
         self.replica_client.add_replicas(rse='MOCK', files=[{'scope': tmp_scope,
                                                              'name': tmp_name,
-                                                             'bytes': 1L,
+                                                             'bytes': 1,
                                                              'adler32': '0cc737eb'}])
         self.replica_client.add_replicas(rse='MOCK3', files=[{'scope': tmp_scope,
                                                               'name': tmp_name,
-                                                              'bytes': 1L,
+                                                              'bytes': 1,
                                                               'adler32': '0cc737eb'}])
         _, out, _ = execute(cmd)
         assert_in('303 See Other', out)
@@ -80,11 +80,11 @@ class TestReplicaMetalinkRedirection:
 
         self.replica_client.add_replicas(rse='MOCK', files=[{'scope': tmp_scope,
                                                              'name': tmp_name,
-                                                             'bytes': 1L,
+                                                             'bytes': 1,
                                                              'adler32': '0cc737eb'}])
         self.replica_client.add_replicas(rse='MOCK3', files=[{'scope': tmp_scope,
                                                               'name': tmp_name,
-                                                              'bytes': 1L,
+                                                              'bytes': 1,
                                                               'adler32': '0cc737eb'}])
         _, out, _ = execute(cmd)
         assert_in('303 See Other', out)

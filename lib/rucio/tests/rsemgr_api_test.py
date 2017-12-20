@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Copyright European Organization for Nuclear Research (CERN)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,7 +37,7 @@ class MgrTestCases():
                 data = json.load(f)
             self.rse_settings['credentials'] = data[rse_tag]
         except KeyError:
-            print 'No credentials found for this RSE.'
+            print('No credentials found for this RSE.')
             pass
         self.tmpdir = tmpdir
         self.gettmpdir = tempfile.mkdtemp()

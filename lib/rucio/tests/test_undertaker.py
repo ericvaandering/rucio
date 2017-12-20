@@ -50,7 +50,7 @@ class TestUndertaker:
 
         replicas = list()
         for dsn in dsns1 + dsns2:
-            files = [{'scope': tmp_scope, 'name': 'file_%s' % generate_uuid(), 'bytes': 1L, 'adler32': '0cc737eb', 'tombstone': datetime.utcnow() + timedelta(weeks=2), 'meta': {'events': 10}} for i in xrange(nbfiles)]
+            files = [{'scope': tmp_scope, 'name': 'file_%s' % generate_uuid(), 'bytes': 1, 'adler32': '0cc737eb', 'tombstone': datetime.utcnow() + timedelta(weeks=2), 'meta': {'events': 10}} for i in xrange(nbfiles)]
             attach_dids(scope=tmp_scope, name=dsn['name'], rse='MOCK', dids=files, account='root')
             replicas += files
 
@@ -105,7 +105,7 @@ class TestUndertaker:
 
         replicas = list()
         for dsn in dsns2:
-            files = [{'scope': tmp_scope, 'name': 'file_%s' % generate_uuid(), 'bytes': 1L, 'adler32': '0cc737eb', 'tombstone': datetime.utcnow() + timedelta(weeks=2), 'meta': {'events': 10}} for i in xrange(nbfiles)]
+            files = [{'scope': tmp_scope, 'name': 'file_%s' % generate_uuid(), 'bytes': 1, 'adler32': '0cc737eb', 'tombstone': datetime.utcnow() + timedelta(weeks=2), 'meta': {'events': 10}} for i in xrange(nbfiles)]
             attach_dids(scope=tmp_scope, name=dsn['name'], rse=rse, dids=files, account='root')
             replicas += files
 

@@ -90,7 +90,7 @@ class AccountClient(BaseClient):
         res = self._send_request(url)
         if res.status_code == codes.ok:
             acc = self._load_json_data(res)
-            return acc.next()
+            return next(acc)
         else:
             exc_cls, exc_msg = self._get_exception(headers=res.headers, status_code=res.status_code, data=res.content)
             raise exc_cls(exc_msg)
@@ -243,7 +243,7 @@ class AccountClient(BaseClient):
         url = build_url(choice(self.list_hosts), path=path)
         res = self._send_request(url, type='GET')
         if res.status_code == codes.ok:
-            return self._load_json_data(res).next()
+            return next(self._load_json_data(res))
         else:
             exc_cls, exc_msg = self._get_exception(headers=res.headers, status_code=res.status_code, data=res.content)
             raise exc_cls(exc_msg)
@@ -260,7 +260,7 @@ class AccountClient(BaseClient):
         url = build_url(choice(self.list_hosts), path=path)
         res = self._send_request(url, type='GET')
         if res.status_code == codes.ok:
-            return self._load_json_data(res).next()
+            return next(self._load_json_data(res))
         else:
             exc_cls, exc_msg = self._get_exception(headers=res.headers, status_code=res.status_code, data=res.content)
             raise exc_cls(exc_msg)

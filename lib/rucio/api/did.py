@@ -13,6 +13,7 @@
   - Cedric Serfon, <cedric.serfon@cern.ch>, 2013-2014
   - Martin Barisits, <martin.barisits@cern.ch>, 2014-2015
 '''
+from __future__ import print_function
 
 import rucio.api.permission
 
@@ -72,7 +73,7 @@ def add_did(scope, name, type, issuer, account=None, statuses={}, meta={}, rules
             if k not in meta:
                 meta[k] = extra_meta[k]
             elif meta[k] != extra_meta[k]:
-                print "Provided metadata %s doesn't match the naming convention: %s != %s" % (k, meta[k], extra_meta[k])
+                print("Provided metadata %s doesn't match the naming convention: %s != %s" % (k, meta[k], extra_meta[k]))
                 raise rucio.common.exception.InvalidObject("Provided metadata %s doesn't match the naming convention: %s != %s" % (k, meta[k], extra_meta[k]))
 
         # Validate metadata

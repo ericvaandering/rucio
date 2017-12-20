@@ -11,6 +11,7 @@
 
 REST utilities
 """
+from __future__ import print_function
 
 from json import loads
 from time import time
@@ -46,10 +47,10 @@ def rucio_loadhook():
     auth_token = ctx.env.get('HTTP_X_RUCIO_AUTH_TOKEN')
     try:
         auth = validate_auth_token(auth_token)
-    except RucioException, e:
+    except RucioException as e:
         raise generate_http_error(500, e.__class__.__name__, e.args[0][0])
-    except Exception, e:
-        print format_exc()
+    except Exception as e:
+        print(format_exc())
         raise InternalError(e)
 
     if auth is None:
@@ -94,11 +95,11 @@ def exception_wrapper(f):
             return f(*args, **kwargs)
         except (Created, HTTPError, OK, seeother):
             raise
-        except RucioException, e:
+        except RucioException as e:
             raise generate_http_error(500, e.__class__.__name__, e.args[0][0])
-        except Exception, e:
-            print type(e)
-            print format_exc()
+        except Exception as e:
+            print(type(e))
+            print(format_exc())
             raise InternalError(e)
     return decorated
 

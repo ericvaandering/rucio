@@ -9,6 +9,7 @@
 # - Mario Lassnig, <mario.lassnig@cern.ch>, 2013
 # - Thomas Beermann, <thomas.beermann@cern.ch>, 2014-2015
 
+from __future__ import print_function
 import calendar
 import datetime
 import json
@@ -55,8 +56,8 @@ class Trace(RucioController):
 
         except ValueError:
             raise generate_http_error(400, 'ValueError', 'Cannot decode json parameter list')
-        except Exception, e:
-            print traceback.format_exc()
+        except Exception as e:
+            print(traceback.format_exc())
             raise InternalError(e)
 
         raise Created()

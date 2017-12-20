@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import absolute_import
 # Copyright European Organization for Nuclear Research (CERN)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +24,7 @@ from uuid import uuid4 as uuid
 
 from rucio.common import exception
 from rucio.rse import rsemanager as mgr
-from rsemgr_api_test import MgrTestCases
+from .rsemgr_api_test import MgrTestCases
 
 
 def get_bucket_key_name(pfn):
@@ -72,7 +74,7 @@ class TestRseS3():
                 data = json.load(f)
             rse_settings['credentials'] = data[rse_tag]
         except KeyError:
-            print 'No credentials found for this RSE.'
+            print('No credentials found for this RSE.')
             pass
 
         for protocol in rse_settings['protocols']:
@@ -111,7 +113,7 @@ class TestRseS3():
                 data = json.load(f)
             rse_settings['credentials'] = data[rse_tag]
         except KeyError:
-            print 'No credentials found for this RSE.'
+            print('No credentials found for this RSE.')
             pass
 
         for protocol in rse_settings['protocols']:

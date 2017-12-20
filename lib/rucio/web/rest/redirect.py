@@ -10,6 +10,7 @@
 # - Cedric Serfon, <cedric.serfon@cern.ch>, 2014
 # - Mario Lassnig, <mario.lassnig@cern.ch>, 2014, 2016-2017
 
+from __future__ import print_function
 from traceback import format_exc
 from urlparse import parse_qs
 from web import application, ctx, header, seeother, InternalError
@@ -139,14 +140,14 @@ class MetaLinkRedirector(RucioController):
             # don't forget to send the metalink footer
             yield '</metalink>\n'
 
-        except DataIdentifierNotFound, e:
+        except DataIdentifierNotFound as e:
             raise generate_http_error(404, 'DataIdentifierNotFound', e.args[0][0])
-        except ReplicaNotFound, e:
+        except ReplicaNotFound as e:
             raise generate_http_error(404, 'ReplicaNotFound', e.args[0][0])
-        except RucioException, e:
+        except RucioException as e:
             raise generate_http_error(500, e.__class__.__name__, e.args[0][0])
-        except Exception, e:
-            print format_exc()
+        except Exception as e:
+            print(format_exc())
             raise InternalError(e)
 
 
@@ -280,12 +281,12 @@ class HeaderRedirector(RucioController):
 
         except seeother:
             raise
-        except ReplicaNotFound, e:
+        except ReplicaNotFound as e:
             raise generate_http_error(404, 'ReplicaNotFound', e.args[0][0])
-        except RucioException, e:
+        except RucioException as e:
             raise generate_http_error(500, e.__class__.__name__, e.args[0][0])
-        except Exception, e:
-            print format_exc()
+        except Exception as e:
+            print(format_exc())
             raise InternalError(e)
 
 

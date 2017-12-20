@@ -11,6 +11,7 @@
   - Vincent Garonne, <vincent.garonne@cern.ch>, 2013-2017
   - Sylvain Blunier, <sylvain.blunier@cern.ch>, 2016
 '''
+from __future__ import print_function
 
 import os
 import ssl

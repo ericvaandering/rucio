@@ -316,7 +316,7 @@ def reaper(rses, worker_number=1, child_number=1, total_children=1, chunk_size=1
 
             time.sleep(1)
 
-        except DatabaseException, error:
+        except DatabaseException as error:
             logging.warning('Reaper:  %s', str(error))
         except:
             logging.critical(traceback.format_exc())

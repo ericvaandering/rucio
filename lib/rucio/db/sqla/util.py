@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Copyright European Organization for Nuclear Research (CERN)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -82,17 +83,17 @@ def drop_everything(echo=True):
 
     for fkc in all_fks:
         try:
-            print str(DropConstraint(fkc)) + ';'
+            print(str(DropConstraint(fkc)) + ';')
             conn.execute(DropConstraint(fkc))
         except:
-            print format_exc()
+            print(format_exc())
 
     for table in tbs:
         try:
-            print str(DropTable(table)).strip() + ';'
+            print(str(DropTable(table)).strip() + ';')
             conn.execute(DropTable(table))
         except:
-            print format_exc()
+            print(format_exc())
 
     trans.commit()
 

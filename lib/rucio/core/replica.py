@@ -16,6 +16,7 @@
   - Thomas Beermann <thomas.beermann@cern.ch>, 2014-2016
   - Wen Guan, <wen.guan@cern.ch>, 2014-2015
 """
+from __future__ import print_function
 
 from collections import defaultdict
 from curses.ascii import isprint
@@ -253,7 +254,7 @@ def update_bad_replicas_history(dids, rse_id, session=None):
                 else:
                     # For completness, it shouldn't happen.
                     final_state = BadFilesStatus.DELETED
-                    print 'Houston we have a problem.'
+                    print('Houston we have a problem.')
                 query = session.query(models.BadReplicas).filter_by(state=BadFilesStatus.BAD, rse_id=rse_id, scope=did['scope'], name=did['name'])
                 query.update({'state': final_state, 'updated_at': datetime.utcnow()}, synchronize_session=False)
             except NoResultFound:
@@ -358,15 +359,15 @@ def __declare_bad_file_replicas(pfns, rse, reason, issuer, status=BadFilesStatus
             rowcount = query.update({'state': ReplicaState.BAD})
             if rowcount != len(declared_replicas):
                 # there shouldn't be any exceptions since all replicas exist
-                print rowcount, len(declared_replicas), declared_replicas
+                print(rowcount, len(declared_replicas), declared_replicas)
                 raise exception.ReplicaNotFound("One or several replicas don't exist.")
     try:
         session.flush()
-    except IntegrityError, error:
+    except IntegrityError as error:
         raise exception.RucioException(error.args)
-    except DatabaseError, error:
+    except DatabaseError as error:
         raise exception.RucioException(error.args)
-    except FlushError, error:
+    except FlushError as error:
         raise exception.RucioException(error.args)
 
     return unknown_replicas
@@ -431,7 +432,7 @@ def get_pfn_to_rse(pfns, session=None):
                 if surl.find(protocols[rse][0]) > -1 or surl.find(protocols[rse][1]) > -1:
                     mult_rse_match += 1
                     if mult_rse_match > 1:
-                        print 'ERROR, multiple matches : %s at %s' % (surl, rse)
+                        print('ERROR, multiple matches : %s at %s' % (surl, rse))
                         raise exception.RucioException('ERROR, multiple matches : %s at %s' % (surl, rse))
                     hint = rse
                     if hint not in dict_rse:
@@ -742,7 +743,7 @@ def _list_replicas(dataset_clause, file_clause, state_clause, show_pfns, schemes
                             rse_schemes = [rsemgr.select_protocol(rse_settings=rse_info[rse],
                                                                   operation='read')['scheme']]
                         except:
-                            print format_exc()
+                            print(format_exc())
 
                     protocols = []
                     for s in rse_schemes:
@@ -753,7 +754,7 @@ def _list_replicas(dataset_clause, file_clause, state_clause, show_pfns, schemes
                         except exception.RSEProtocolNotSupported:
                             pass  # no need to be verbose
                         except:
-                            print format_exc()
+                            print(format_exc())
                     tmp_protocols[rse] = protocols
 
                 # get pfns
@@ -788,7 +789,7 @@ def _list_replicas(dataset_clause, file_clause, state_clause, show_pfns, schemes
                         pfns.append(pfn)
                     except:
                         # temporary protection
-                        print format_exc()
+                        print(format_exc())
 
                     if protocol.attributes['scheme'] == 'srm':
                         try:
@@ -879,11 +880,11 @@ def __bulk_add_new_file_dids(files, account, dataset_meta=None, session=None):
         new_did.save(session=session, flush=False)
     try:
         session.flush()
-    except IntegrityError, error:
+    except IntegrityError as error:
         raise exception.RucioException(error.args)
-    except DatabaseError, error:
+    except DatabaseError as error:
         raise exception.RucioException(error.args)
-    except FlushError, error:
+    except FlushError as error:
         if match('New instance .* with identity key .* conflicts with persistent instance', error.args[0]):
             raise exception.DataIdentifierAlreadyExists('Data Identifier already exists!')
         raise exception.RucioException(error.args)
@@ -974,14 +975,14 @@ def __bulk_add_replicas(rse_id, files, account, session=None):
                                                       new_replicas)
         session.flush()
         return nbfiles, bytes
-    except IntegrityError, error:
+    except IntegrityError as error:
         if match('.*IntegrityError.*ORA-00001: unique constraint .*REPLICAS_PK.*violated.*', error.args[0]) \
            or match('.*IntegrityError.*1062.*Duplicate entry.*', error.args[0]) \
            or error.args[0] == '(IntegrityError) columns rse_id, scope, name are not unique' \
            or match('.*IntegrityError.*duplicate key value violates unique constraint.*', error.args[0]):
             raise exception.Duplicate("File replica already exists!")
         raise exception.RucioException(error.args)
-    except DatabaseError, error:
+    except DatabaseError as error:
         raise exception.RucioException(error.args)
 
 
@@ -1038,7 +1039,7 @@ def add_replicas(rse, files, account, rse_id=None, ignore_availability=True,
             expected_pfns = clean_surls(expected_pfns.values())
             pfns = clean_surls(pfns)
             if pfns != expected_pfns:
-                print 'ALERT: One of the PFNs provided does not match the Rucio expected PFN : %s vs %s (%s)' % (str(pfns), str(expected_pfns), str(lfns))
+                print('ALERT: One of the PFNs provided does not match the Rucio expected PFN : %s vs %s (%s)' % (str(pfns), str(expected_pfns), str(lfns)))
                 raise exception.InvalidPath('One of the PFNs provided does not match the Rucio expected PFN : %s vs %s (%s)' % (str(pfns), str(expected_pfns), str(lfns)))
 
     nbfiles, bytes = __bulk_add_replicas(rse_id=replica_rse.id, files=files, account=account, session=session)

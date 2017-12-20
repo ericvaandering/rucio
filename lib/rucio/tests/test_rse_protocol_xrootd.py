@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import absolute_import
 # Copyright European Organization for Nuclear Research (CERN)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +22,7 @@ from nose.tools import raises
 
 from rucio.common import exception
 from rucio.rse import rsemanager
-from rsemgr_api_test import MgrTestCases
+from .rsemgr_api_test import MgrTestCases
 from rucio.common.utils import execute
 
 
@@ -52,8 +54,8 @@ class TestRseXROOTD():
 
         try:
             os.mkdir(prefix)
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
 
         os.system('dd if=/dev/urandom of=%s/data.raw bs=1024 count=1024' % prefix)
         cls.static_file = 'xroot://%s:%d/%s/data.raw' % (hostname, port, prefix)

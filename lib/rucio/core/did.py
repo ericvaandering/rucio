@@ -296,7 +296,7 @@ def __add_files_to_archive(scope, name, files, account, ignore_duplicate=False, 
 
         contents and session.bulk_insert_mappings(models.ConstituentAssociation, contents)
         session.flush()
-    except IntegrityError, error:
+    except IntegrityError as error:
         raise exception.RucioException(error.args)
     pass
 

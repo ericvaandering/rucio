@@ -54,11 +54,11 @@ def _retrial(func, *args, **kwargs):
     delay = 0
     while True:
         try:
-            return apply(func, args, kwargs)
-        except DataIdentifierNotFound, error:
+            return func(*args, **kwargs)
+        except DataIdentifierNotFound as error:
             logging.warning(error)
             return 1
-        except DatabaseException, error:
+        except DatabaseException as error:
             logging.error(error)
             if exp(delay) > 600:
                 logging.error('Cannot execute %s after %i attempt. Failing the job.' % (func.__name__, delay))
@@ -86,7 +86,7 @@ def is_matching_subscription(subscription, did, metadata):
         return False
     try:
         filter = loads(subscription['filter'])
-    except ValueError, error:
+    except ValueError as error:
         logging.error('%s : Subscription will be skipped' % error)
         return False
     # Loop over the keys of filter for subscription

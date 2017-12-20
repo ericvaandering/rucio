@@ -1,3 +1,5 @@
+from __future__ import print_function
+from __future__ import absolute_import
 # Copyright European Organization for Nuclear Research (CERN)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +15,7 @@ import os
 import tempfile
 
 from rucio.rse import rsemanager
-from rsemgr_api_test import MgrTestCases
+from .rsemgr_api_test import MgrTestCases
 from rucio.common.exception import FileReplicaAlreadyExists
 
 
@@ -53,14 +55,14 @@ class TestRseS3ES():
             destfile = rsemanager.lfns2pfns(rse_settings, [{'name': f, 'scope': 'user.%s' % (cls.user)}, ], operation='write', scheme='s3+https').values()[0]
             try:
                 storage.put('%s/%s' % (cls.tmpdir, f), destfile)
-            except FileReplicaAlreadyExists, e:
-                print e
+            except FileReplicaAlreadyExists as e:
+                print(e)
         f = 'data.raw'
         destfile = rsemanager.lfns2pfns(rse_settings, [{'name': f, 'scope': 'user.%s' % (cls.user)}, ], operation='write', scheme='s3+https').values()[0]
         try:
             storage.put('%s/%s' % (cls.tmpdir, f), destfile)
-        except FileReplicaAlreadyExists, e:
-            print e
+        except FileReplicaAlreadyExists as e:
+            print(e)
 
     @classmethod
     def tearDownClass(cls):
@@ -80,12 +82,12 @@ class TestRseS3ES():
         storage.connect()
         try:
             storage.delete('%s://%s:%s/%s/%s' % (scheme, hostname, port, prefix, 'user'))
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
         try:
             storage.delete('%s://%s:%s/%s/%s' % (scheme, hostname, port, prefix, 'group'))
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
 
     def setup(self):
         """S3ES (RSE/PROTOCOLS): Creating Mgr-instance """

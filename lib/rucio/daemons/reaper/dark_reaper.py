@@ -132,7 +132,7 @@ def reaper(rses=[], worker_number=1, total_workers=1, chunk_size=100, once=False
                 logging.info('Dark Reaper %s-%s: Nothing to do. I will sleep for 60s', worker_number, total_workers)
                 time.sleep(60)
 
-        except DatabaseException, error:
+        except DatabaseException as error:
             logging.warning('Reaper:  %s', str(error))
         except:
             logging.critical(traceback.format_exc())

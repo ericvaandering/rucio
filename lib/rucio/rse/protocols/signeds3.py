@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Copyright European Organization for Nuclear Research (CERN)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -164,7 +165,7 @@ class Default(protocol.RSEProtocol):
                         if length:
                             pbar = ProgressBar(maxval=totnchunk).start()
                         else:
-                            print 'Malformed HTTP response (missing content-length header). Cannot show progress bar.'
+                            print('Malformed HTTP response (missing content-length header). Cannot show progress bar.')
                         for chunk in result.iter_content(chunksize):
                             f.write(chunk)
                             if length:

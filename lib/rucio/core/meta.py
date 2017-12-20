@@ -10,6 +10,7 @@
   - Vincent Garonne, <vincent.garonne@cern.ch>, 2012-2015
   - Mario Lassnig, <mario.lassnig@cern.ch>, 2013
 '''
+from __future__ import print_function
 
 from re import match
 
@@ -151,5 +152,5 @@ def validate_meta(meta, did_type, session=None):
                 filter_by(value=meta[key]).\
                 one()
         except NoResultFound:
-            print "The value '%s' for the key '%s' is not valid" % (meta[key], key)
+            print("The value '%s' for the key '%s' is not valid" % (meta[key], key))
             raise InvalidObject("The value '%s' for the key '%s' is not valid" % (meta[key], key))

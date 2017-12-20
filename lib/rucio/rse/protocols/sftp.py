@@ -110,7 +110,7 @@ class Default(protocol.RSEProtocol):
             try:
                 self.__connection.execute('mkdir -p %s' % '/'.join(self.pfn2path(target).split('/')[0:-1]))
                 self.__connection.put(sf, self.pfn2path(target))
-            except Exception, e:
+            except Exception as e:
                 raise exception.DestinationNotAccessible(e)
         except OSError as e:
             if e.errno == 2:

@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 # Copyright European Organization for Nuclear Research (CERN)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -8,11 +9,11 @@
 # - Fernando Lopez, <felopez@cern.ch>, 2015
 from rucio.common import dumper
 from rucio.common.dumper import error, DUMPS_CACHE_DIR
-import data_models
+from . import data_models
 import datetime
 import logging
 import os
-import path_parsing
+from . import path_parsing
 import re
 import subprocess
 import tempfile
@@ -155,7 +156,7 @@ class Consistency(data_models.DataModel):
 
 def _try_to_advance(it, default=None):
     try:
-        el = it.next()
+        el = next(it)
     except StopIteration:
         return default
     return el.strip()

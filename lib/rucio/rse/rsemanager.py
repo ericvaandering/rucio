@@ -15,6 +15,7 @@
  - Martin Barisits, <martin.barisits@cern.ch>, 2017
  - Tobias Wegner, <tobias.wegner@cern.ch>, 2017
 '''
+from __future__ import print_function
 
 import copy
 import os
@@ -157,7 +158,7 @@ def create_protocol(rse_settings, operation, scheme=None):
         try:
             mod = getattr(mod, n)
         except AttributeError:
-            print 'Protocol implementation not found'
+            print('Protocol implementation not found')
             raise  # TODO: provide proper rucio exception
     protocol = mod(protocol_attr, rse_settings)
     return protocol
@@ -239,16 +240,16 @@ def download(rse_settings, files, dest_dir=None, force_scheme=None, ignore_check
                     tempfile = '%s/%s.part' % (target_dir, f['name'])
                     if os.path.isfile(tempfile):
                         if printstatements:
-                            print '%s already exists, probably from a failed attempt. Will remove it' % (tempfile)
+                            print('%s already exists, probably from a failed attempt. Will remove it' % (tempfile))
                         os.unlink(tempfile)
                     protocol.get(pfn, tempfile)
                     if printstatements:
-                        print 'File downloaded. Will be validated'
+                        print('File downloaded. Will be validated')
 
                     localchecksum = f['adler32'] if ignore_checksum else utils.adler32(tempfile)
                     if localchecksum == f['adler32']:
                         if printstatements:
-                            print 'File validated'
+                            print('File validated')
                         os.rename(tempfile, finalfile)
                     else:
                         os.unlink(tempfile)

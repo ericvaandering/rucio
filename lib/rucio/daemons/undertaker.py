@@ -64,9 +64,9 @@ def undertaker(worker_number=1, total_workers=1, chunk_size=5, once=False):
                     delete_dids(dids=chunk, account='root')
                     logging.info('Undertaker(%s): Delete %s dids', worker_number, len(chunk))
                     record_counter(counters='undertaker.delete_dids', delta=len(chunk))
-                except RuleNotFound, error:
+                except RuleNotFound as error:
                     logging.error(error)
-                except DatabaseException, error:
+                except DatabaseException as error:
                     logging.error('Undertaker(%s): Got database error %s.', worker_number, str(error))
         except:
             logging.critical(traceback.format_exc())

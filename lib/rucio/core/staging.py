@@ -101,7 +101,7 @@ def get_stagein_requests_and_source_replicas(process=None, total_processes=None,
                     if source_replica_expression:
                         try:
                             parsed_rses = parse_expression(source_replica_expression, session=session)
-                        except InvalidRSEExpression, e:
+                        except InvalidRSEExpression as e:
                             logging.error("Invalid RSE exception %s: %s" % (source_replica_expression, e))
                             continue
                         else:

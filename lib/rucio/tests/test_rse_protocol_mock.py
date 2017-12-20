@@ -8,12 +8,13 @@
  Authors:
  - Vincent Garonne, <vincent.garonne@cern.ch>, 2013
 '''
+from __future__ import absolute_import
 
 from nose.tools import raises
 
 from rucio.common import exception
 from rucio.rse import rsemanager as mgr
-from rsemgr_api_test import MgrTestCases
+from .rsemgr_api_test import MgrTestCases
 
 
 class TestRseMOCK(object):

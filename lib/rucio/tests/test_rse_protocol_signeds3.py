@@ -10,6 +10,8 @@
  - Wen Guan, <wen.guan@cern.ch>, 2016
  - Vincent Garonne, <vincent.garonne@cern.ch>, 2013
 '''
+from __future__ import print_function
+from __future__ import absolute_import
 import json
 import os
 import tempfile
@@ -18,7 +20,7 @@ from nose.tools import raises
 
 from rucio.common import exception
 from rucio.rse import rsemanager
-from rsemgr_api_test import MgrTestCases
+from .rsemgr_api_test import MgrTestCases
 from rucio.common.exception import FileReplicaAlreadyExists
 
 
@@ -61,14 +63,14 @@ class TestRseSignedS3(object):
             destfile = rsemanager.lfns2pfns(rse_settings, [{'name': f, 'scope': 'user.%s' % (cls.user)}, ], operation='write', scheme='s3+https').values()[0]
             try:
                 storage.put('%s/%s' % (cls.tmpdir, f), destfile)
-            except FileReplicaAlreadyExists, e:
-                print e
+            except FileReplicaAlreadyExists as e:
+                print(e)
         f = 'data.raw'
         destfile = rsemanager.lfns2pfns(rse_settings, [{'name': f, 'scope': 'user.%s' % (cls.user)}, ], operation='write', scheme='s3+https').values()[0]
         try:
             storage.put('%s/%s' % (cls.tmpdir, f), destfile)
-        except FileReplicaAlreadyExists, e:
-            print e
+        except FileReplicaAlreadyExists as e:
+            print(e)
 
     @classmethod
     def tearDownClass(cls):
@@ -84,12 +86,12 @@ class TestRseSignedS3(object):
         storage.connect()
         try:
             storage.delete('%s://%s:%s/%s/%s' % (scheme, hostname, port, prefix, 'user'))
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
         try:
             storage.delete('%s://%s:%s/%s/%s' % (scheme, hostname, port, prefix, 'group'))
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
 
     def setup(self):
         """SignedS3 (RSE/PROTOCOLS): Creating Mgr-instance """

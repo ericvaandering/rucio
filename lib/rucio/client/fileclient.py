@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Copyright European Organization for Nuclear Research (CERN)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,6 +45,6 @@ class FileClient(BaseClient):
             rses = loads(r.text)
             return rses
         else:
-            print r.status_code
+            print(r.status_code)
             exc_cls, exc_msg = self._get_exception(headers=r.headers, status_code=r.status_code, data=r.content)
             raise exc_cls(exc_msg)

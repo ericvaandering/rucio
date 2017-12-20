@@ -65,13 +65,13 @@ class Scope(RucioController):
         """
         try:
             add_scope(scope, account, issuer=ctx.env.get('issuer'))
-        except Duplicate, e:
+        except Duplicate as e:
             raise generate_http_error(409, 'Duplicate', e.args[0][0])
-        except AccountNotFound, e:
+        except AccountNotFound as e:
             raise generate_http_error(404, 'AccountNotFound', e.args[0][0])
-        except RucioException, e:
+        except RucioException as e:
             raise generate_http_error(500, e.__class__.__name__, e.args[0][0])
-        except Exception, e:
+        except Exception as e:
             raise InternalError(e)
 
         raise Created()
@@ -99,9 +99,9 @@ class ScopeList(RucioController):
         header('Content-Type', 'application/json')
         try:
             scopes = get_scopes(account)
-        except AccountNotFound, e:
+        except AccountNotFound as e:
             raise generate_http_error(404, 'AccountNotFound', e.args[0][0])
-        except Exception, e:
+        except Exception as e:
             raise InternalError(e)
 
         if not len(scopes):

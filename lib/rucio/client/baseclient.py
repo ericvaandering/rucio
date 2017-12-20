@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Copyright European Organization for Nuclear Research (CERN)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -552,7 +553,8 @@ class BaseClient(object):
             token_file_handler = open(self.token_file, 'r')
             self.auth_token = token_file_handler.readline()
             self.headers['X-Rucio-Auth-Token'] = self.auth_token
-        except IOError as (errno, strerror):  # NOQA
+        except IOError as xxx_todo_changeme:  # NOQA
+            (errno, strerror) = xxx_todo_changeme.args  # NOQA
             print("I/O error({0}): {1}".format(errno, strerror))
         except Exception:
             raise
@@ -572,7 +574,7 @@ class BaseClient(object):
         if not path.isdir(token_path):
             try:
                 LOG.debug('rucio token folder \'%s\' not found. Create it.' % token_path)
-                makedirs(token_path, 0700)
+                makedirs(token_path, 0o700)
             except Exception:
                 raise
 
@@ -582,7 +584,8 @@ class BaseClient(object):
             with fdopen(file_d, "w") as f_token:
                 f_token.write(self.auth_token)
             move(file_n, self.token_file)
-        except IOError as (errno, strerror):  # NOQA
+        except IOError as xxx_todo_changeme1:  # NOQA
+            (errno, strerror) = xxx_todo_changeme1.args  # NOQA
             print("I/O error({0}): {1}".format(errno, strerror))
         except Exception:
             raise

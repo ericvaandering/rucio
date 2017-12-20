@@ -15,7 +15,7 @@ def test_patterns_on_file_names():
     pattern = 'filename-with-%Y-weird-%m-date-%d'
     newest, date = srmdumps.get_newest(base_url, pattern, links)
     eq_(newest, links[0])
-    eq_(date, datetime(2015, 01, 30))
+    eq_(date, datetime(2015, 0o1, 30))
 
 
 def test_the_newest_path():
@@ -29,7 +29,7 @@ def test_the_newest_path():
     pattern = 'filename-with-%Y-weird-%m-date-%d'
     newest, date = srmdumps.get_newest(base_url, pattern, links)
     eq_(newest, '/test/filename-with-2015-weird-01-date-30')
-    eq_(date, datetime(2015, 01, 30))
+    eq_(date, datetime(2015, 0o1, 30))
 
 
 def test_be_on_directory():
@@ -41,7 +41,7 @@ def test_be_on_directory():
     pattern = 'dir-with-%Y-weird-%m-date-%d/dump'
     newest, date = srmdumps.get_newest(base_url, pattern, links)
     eq_(newest, links[0] + '/dump')
-    eq_(date, datetime(2015, 01, 30))
+    eq_(date, datetime(2015, 0o1, 30))
 
 
 @raises(Exception)

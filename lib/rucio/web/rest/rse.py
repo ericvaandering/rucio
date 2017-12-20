@@ -13,6 +13,7 @@
 # - Martin Barisits, <martin.barisits@cern.ch>, 2017
 
 
+from __future__ import print_function
 from json import dumps, loads
 from traceback import format_exc
 from urlparse import parse_qs
@@ -76,11 +77,11 @@ class RSEs(RucioController):
                 for rse in parse_rse_expression(params['expression']):
                     item = {'rse': rse}
                     yield render_json(**item) + '\n'
-            except InvalidRSEExpression, error:
+            except InvalidRSEExpression as error:
                 raise generate_http_error(400, 'InvalidRSEExpression', error[0][0])
-            except InvalidObject, error:
+            except InvalidObject as error:
                 raise generate_http_error(400, 'InvalidObject', error[0][0])
-            except RucioException, error:
+            except RucioException as error:
                 raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
         else:
             for rse in list_rses():
@@ -120,19 +121,19 @@ class RSE(RucioController):
         kwargs['issuer'] = ctx.env.get('issuer')
         try:
             add_rse(rse, **kwargs)
-        except InvalidObject, error:
+        except InvalidObject as error:
             raise generate_http_error(400, 'InvalidObject', error[0][0])
-        except AccessDenied, error:
+        except AccessDenied as error:
             raise generate_http_error(401, 'AccessDenied', error.args[0][0])
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error.args[0][0])
-        except Duplicate, error:
+        except Duplicate as error:
             raise generate_http_error(409, 'Duplicate', error[0][0])
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
-        except Exception, error:
-            print error
-            print format_exc()
+        except Exception as error:
+            print(error)
+            print(format_exc())
             raise InternalError(error)
 
         raise Created()
@@ -162,19 +163,19 @@ class RSE(RucioController):
         kwargs['issuer'] = ctx.env.get('issuer')
         try:
             update_rse(rse, **kwargs)
-        except InvalidObject, error:
+        except InvalidObject as error:
             raise generate_http_error(400, 'InvalidObject', error[0][0])
-        except AccessDenied, error:
+        except AccessDenied as error:
             raise generate_http_error(401, 'AccessDenied', error.args[0][0])
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error.args[0][0])
-        except Duplicate, error:
+        except Duplicate as error:
             raise generate_http_error(409, 'Duplicate', error[0][0])
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
-        except Exception, error:
-            print error
-            print format_exc()
+        except Exception as error:
+            print(error)
+            print(format_exc())
             raise InternalError(error)
 
         raise Created()
@@ -196,9 +197,9 @@ class RSE(RucioController):
         try:
             rse_prop = get_rse(rse=rse)
             return render_json(**rse_prop)
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error[0][0])
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
 
     def DELETE(self, rse):
@@ -216,9 +217,9 @@ class RSE(RucioController):
         """
         try:
             del_rse(rse=rse, issuer=ctx.env.get('issuer'))
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error.args[0][0])
-        except AccessDenied, error:
+        except AccessDenied as error:
             raise generate_http_error(401, 'AccessDenied', error.args[0][0])
 
         raise OK()
@@ -250,16 +251,16 @@ class Attributes(RucioController):
 
         try:
             value = parameter['value']
-        except KeyError, error:
+        except KeyError as error:
             raise generate_http_error(400, 'KeyError', '%s not defined' % str(error))
 
         try:
             add_rse_attribute(rse=rse, key=key, value=value, issuer=ctx.env.get('issuer'))
-        except AccessDenied, error:
+        except AccessDenied as error:
             raise generate_http_error(401, 'AccessDenied', error.args[0][0])
-        except Duplicate, error:
+        except Duplicate as error:
             raise generate_http_error(409, 'Duplicate', error[0][0])
-        except Exception, error:
+        except Exception as error:
             raise InternalError(error)
 
         raise Created()
@@ -285,11 +286,11 @@ class Attributes(RucioController):
     def DELETE(self, rse, key):
         try:
             del_rse_attribute(rse=rse, key=key, issuer=ctx.env.get('issuer'))
-        except AccessDenied, error:
+        except AccessDenied as error:
             raise generate_http_error(401, 'AccessDenied', error.args[0][0])
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error.args[0][0])
-        except Exception, error:
+        except Exception as error:
             raise InternalError(error)
 
         raise OK()
@@ -314,17 +315,17 @@ class Protocols(RucioController):
         p_list = None
         try:
             p_list = get_rse_protocols(rse, issuer=ctx.env.get('issuer'))
-        except RSEOperationNotSupported, error:
+        except RSEOperationNotSupported as error:
             raise generate_http_error(404, 'RSEOperationNotSupported', error[0][0])
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error[0][0])
-        except RSEProtocolNotSupported, error:
+        except RSEProtocolNotSupported as error:
             raise generate_http_error(404, 'RSEProtocolNotSupported', error[0][0])
-        except RSEProtocolDomainNotSupported, error:
+        except RSEProtocolDomainNotSupported as error:
             raise generate_http_error(404, 'RSEProtocolDomainNotSupported', error[0][0])
-        except Exception, error:
-            print error
-            print format_exc()
+        except Exception as error:
+            print(error)
+            print(format_exc())
             raise InternalError(error)
         if len(p_list['protocols']):
             return dumps(p_list['protocols'])
@@ -361,23 +362,23 @@ class Protocol(RucioController):
 
         try:
             add_protocol(rse, issuer=ctx.env.get('issuer'), data=parameters)
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error[0][0])
-        except AccessDenied, error:
+        except AccessDenied as error:
             raise generate_http_error(401, 'AccessDenied', error.args[0][0])
-        except Duplicate, error:
+        except Duplicate as error:
             raise generate_http_error(409, 'Duplicate', error[0][0])
-        except InvalidObject, error:
+        except InvalidObject as error:
             raise generate_http_error(400, 'InvalidObject', error[0][0])
-        except RSEProtocolDomainNotSupported, error:
+        except RSEProtocolDomainNotSupported as error:
             raise generate_http_error(404, 'RSEProtocolDomainNotSupported', error[0][0])
-        except RSEProtocolPriorityError, error:
+        except RSEProtocolPriorityError as error:
             raise generate_http_error(409, 'RSEProtocolPriorityError', error[0][0])
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
-        except Exception, error:
-            print error
-            print format_exc()
+        except Exception as error:
+            print(error)
+            print(format_exc())
             raise InternalError(error)
         raise Created()
 
@@ -397,15 +398,15 @@ class Protocol(RucioController):
         p_list = None
         try:
             p_list = get_rse_protocols(rse, issuer=ctx.env.get('issuer'))
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error[0][0])
-        except RSEProtocolNotSupported, error:
+        except RSEProtocolNotSupported as error:
             raise generate_http_error(404, 'RSEProtocolNotSupported', error[0][0])
-        except RSEProtocolDomainNotSupported, error:
+        except RSEProtocolDomainNotSupported as error:
             raise generate_http_error(404, 'RSEProtocolDomainNotSupported', error[0][0])
-        except Exception, error:
-            print error
-            print format_exc()
+        except Exception as error:
+            print(error)
+            print(format_exc())
             raise InternalError(error)
         return dumps(p_list)
 
@@ -432,21 +433,21 @@ class Protocol(RucioController):
 
         try:
             update_protocols(rse, issuer=ctx.env.get('issuer'), scheme=scheme, hostname=hostname, port=port, data=parameter)
-        except InvalidObject, error:
+        except InvalidObject as error:
             raise generate_http_error(400, 'InvalidObject', error[0][0])
-        except RSEProtocolNotSupported, error:
+        except RSEProtocolNotSupported as error:
             raise generate_http_error(404, 'RSEProtocolNotSupported', error[0][0])
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error[0][0])
-        except RSEProtocolDomainNotSupported, error:
+        except RSEProtocolDomainNotSupported as error:
             raise generate_http_error(404, 'RSEProtocolDomainNotSupported', error[0][0])
-        except RSEProtocolPriorityError, error:
+        except RSEProtocolPriorityError as error:
             raise generate_http_error(409, 'RSEProtocolPriorityError', error[0][0])
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
-        except Exception, error:
-            print error
-            print format_exc()
+        except Exception as error:
+            print(error)
+            print(format_exc())
             raise InternalError(error)
 
         raise OK()
@@ -465,15 +466,15 @@ class Protocol(RucioController):
         """
         try:
             del_protocols(rse, issuer=ctx.env.get('issuer'), scheme=scheme, hostname=hostname, port=port)
-        except RSEProtocolNotSupported, error:
+        except RSEProtocolNotSupported as error:
             raise generate_http_error(404, 'RSEProtocolNotSupported', error[0][0])
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error[0][0])
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
-        except Exception, error:
-            print error
-            print format_exc()
+        except Exception as error:
+            print(error)
+            print(format_exc())
             raise InternalError(error)
 
         raise OK()
@@ -498,12 +499,12 @@ class Usage(RucioController):
 
         try:
             usage = get_rse_usage(rse, issuer=ctx.env.get('issuer'), source=source)
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error[0][0])
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
-        except Exception, error:
-            print format_exc()
+        except Exception as error:
+            print(format_exc())
             raise InternalError(error)
 
         for u in usage:
@@ -532,14 +533,14 @@ class Usage(RucioController):
 
         try:
             set_rse_usage(rse=rse, issuer=ctx.env.get('issuer'), **parameter)
-        except AccessDenied, error:
+        except AccessDenied as error:
             raise generate_http_error(401, 'AccessDenied', error.args[0][0])
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error.args[0][0])
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
-        except Exception, error:
-            print format_exc()
+        except Exception as error:
+            print(format_exc())
             raise InternalError(error)
 
         raise OK()
@@ -564,12 +565,12 @@ class UsageHistory(RucioController):
         try:
             for usage in list_rse_usage_history(rse=rse, issuer=ctx.env.get('issuer'), source=source):
                 yield render_json(**usage) + '\n'
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error[0][0])
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
-        except Exception, error:
-            print format_exc()
+        except Exception as error:
+            print(format_exc())
             raise InternalError(error)
 
 
@@ -586,12 +587,12 @@ class Limits(RucioController):
         try:
             limits = get_rse_limits(rse=rse, issuer=ctx.env.get('issuer'))
             return render_json(**limits)
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error[0][0])
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
-        except Exception, error:
-            print format_exc()
+        except Exception as error:
+            print(format_exc())
             raise InternalError(error)
 
     def PUT(self, rse):
@@ -617,14 +618,14 @@ class Limits(RucioController):
             raise generate_http_error(400, 'ValueError', 'Cannot decode json parameter dictionary')
         try:
             set_rse_limits(rse=rse, issuer=ctx.env.get('issuer'), **parameter)
-        except AccessDenied, error:
+        except AccessDenied as error:
             raise generate_http_error(401, 'AccessDenied', error.args[0][0])
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error.args[0][0])
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
-        except Exception, error:
-            print format_exc()
+        except Exception as error:
+            print(format_exc())
             raise InternalError(error)
 
         raise OK()
@@ -644,12 +645,12 @@ class RSEAccountUsageLimit(RucioController):
             usage = get_rse_account_usage(rse=rse)
             for row in usage:
                 yield dumps(row, cls=APIEncoder) + '\n'
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error[0][0])
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
-        except Exception, error:
-            print format_exc()
+        except Exception as error:
+            print(format_exc())
             raise InternalError(error)
 
 
@@ -668,12 +669,12 @@ class Distance(RucioController):
                                     destination=destination,
                                     issuer=ctx.env.get('issuer'))
             return dumps(distance, cls=APIEncoder)
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error[0][0])
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
-        except Exception, error:
-            print format_exc()
+        except Exception as error:
+            print(format_exc())
             raise InternalError(error)
 
     def POST(self, source, destination):
@@ -702,14 +703,14 @@ class Distance(RucioController):
                          destination=destination,
                          issuer=ctx.env.get('issuer'),
                          **parameter)
-        except AccessDenied, error:
+        except AccessDenied as error:
             raise generate_http_error(401, 'AccessDenied', error.args[0][0])
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error.args[0][0])
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
-        except Exception, error:
-            print format_exc()
+        except Exception as error:
+            print(format_exc())
             raise InternalError(error)
         raise Created()
 
@@ -738,14 +739,14 @@ class Distance(RucioController):
             update_distance(source=source, destination=destination,
                             issuer=ctx.env.get('issuer'),
                             parameters=parameters)
-        except AccessDenied, error:
+        except AccessDenied as error:
             raise generate_http_error(401, 'AccessDenied', error.args[0][0])
-        except RSENotFound, error:
+        except RSENotFound as error:
             raise generate_http_error(404, 'RSENotFound', error.args[0][0])
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0][0])
-        except Exception, error:
-            print format_exc()
+        except Exception as error:
+            print(format_exc())
             raise InternalError(error)
         raise OK()
 

@@ -80,7 +80,7 @@ class UploadClient(BaseClient):
                 # ToDo the REST call for: rucio_server.prepare_upload(account, sources[src], recommendation)
                 try:
                     RSEMgr.upload(src, recommendation)
-                except (RSEAccessDenied, FullStorage), error:
+                except (RSEAccessDenied, FullStorage) as error:
                     report[src] = error
                     continue
                 # ToDo the REST call for: rucio_server.confirm_upload(src, recommendation)

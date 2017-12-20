@@ -10,6 +10,7 @@
 """
 This script is to be used to background rebalance ATLAS Nuclei datadisks
 """
+from __future__ import print_function
 
 from sqlalchemy import or_
 
@@ -41,9 +42,9 @@ for rse in rses:
     rse['receive_volume'] = 0  # Already rebalanced volume in this run
 global_ratio = float(total_primary) / float(total_secondary)
 
-print 'Global ratio: %f' % (global_ratio)
+print('Global ratio: %f' % (global_ratio))
 for rse in sorted(rses, key=lambda k: k['ratio']):
-    print '  %s (%f)' % (rse['rse'], rse['ratio'])
+    print('  %s (%f)' % (rse['rse'], rse['ratio']))
 
 rses_over_ratio = sorted([rse for rse in rses if rse['ratio'] > global_ratio + global_ratio * tolerance], key=lambda k: k['ratio'], reverse=True)
 rses_under_ratio = sorted([rse for rse in rses if rse['ratio'] < global_ratio - global_ratio * tolerance], key=lambda k: k['ratio'], reverse=False)
@@ -51,9 +52,9 @@ rses_under_ratio = sorted([rse for rse in rses if rse['ratio'] < global_ratio - 
 session = get_session()
 active_rses = session.query(models.ReplicationRule.rse_expression).filter(or_(models.ReplicationRule.state == RuleState.REPLICATING, models.ReplicationRule.state == RuleState.STUCK),
                                                                           models.ReplicationRule.comments == 'Nuclei Background rebalancing').group_by(models.ReplicationRule.rse_expression).all()
-print 'Excluding RSEs as destination which have active Background Rebalancing rules:'
+print('Excluding RSEs as destination which have active Background Rebalancing rules:')
 for rse in active_rses:
-    print '  %s' % (rse[0])
+    print('  %s' % (rse[0]))
     for des in rses_under_ratio:
         if des['rse'] == rse[0]:
             rses_under_ratio.remove(des)
@@ -76,7 +77,7 @@ for source_rse in rses_over_ratio:
                 if available_target_rebalance_volume >= available_source_rebalance_volume:
                     available_target_rebalance_volume = available_source_rebalance_volume
 
-                print 'Rebalance %dTB from %s(%f) to %s(%f)' % (available_target_rebalance_volume / 1E12, source_rse['rse'], source_rse['ratio'], destination_rse['rse'], destination_rse['ratio'])
+                print('Rebalance %dTB from %s(%f) to %s(%f)' % (available_target_rebalance_volume / 1E12, source_rse['rse'], source_rse['ratio'], destination_rse['rse'], destination_rse['ratio']))
                 rebalance_rse(source_rse['rse'], max_bytes=available_target_rebalance_volume, dry_run=False, comment='Nuclei Background rebalancing', force_expression=destination_rse['rse'])
 
                 destination_rse['receive_volume'] += available_target_rebalance_volume

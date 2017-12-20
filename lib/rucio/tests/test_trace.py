@@ -33,7 +33,7 @@ class TestTrace(object):
                               'hex': 0xDEADBEEF,
                               'int': 3,
                               'float': 3.14,
-                              'long': 314314314314314314L,
+                              'long': 314314314314314314,
                               'timestamp': time.time(),
                               'datetime_str': str(datetime.datetime.utcnow()),  # not JSON serialisable
                               'boolean': True})

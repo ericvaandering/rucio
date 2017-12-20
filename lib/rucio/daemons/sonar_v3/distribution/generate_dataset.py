@@ -11,6 +11,7 @@
 
 Generates files filled with random data.
 """
+from __future__ import print_function
 
 
 import os
@@ -25,7 +26,7 @@ def main():
         message = """
         Usage: python generate_dataset.py <dataset_name> <number of files> <size of each file in bytes>
         """
-        print message
+        print(message)
         sys.exit(0)
     dataset_name = sys.argv[1]
     file_number = int(sys.argv[2])

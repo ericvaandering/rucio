@@ -9,6 +9,7 @@
   Authors:
   - Vincent Garonne, <vincent.garonne@cern.ch>, 2017
 '''
+from __future__ import print_function
 
 from json import dumps
 from logging import getLogger, StreamHandler, DEBUG
@@ -39,8 +40,8 @@ class Archive(RucioController):
         try:
             for file in list_archive_content(scope=scope, name=name):
                 yield dumps(file) + '\n'
-        except Exception, error:
-            print format_exc()
+        except Exception as error:
+            print(format_exc())
             raise InternalError(error)
 
 

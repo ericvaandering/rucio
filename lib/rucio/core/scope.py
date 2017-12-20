@@ -38,7 +38,7 @@ def add_scope(scope, account, session=None):
     new_scope = models.Scope(scope=scope, account=account, status=ScopeStatus.OPEN)
     try:
         new_scope.save(session=session)
-    except IntegrityError, e:
+    except IntegrityError as e:
         if match('.*IntegrityError.*ORA-00001: unique constraint.*SCOPES_PK.*violated.*', e.args[0]) \
            or match('.*IntegrityError.*1062, "Duplicate entry.*for key.*', e.args[0]) \
            or match('.*IntegrityError.*UNIQUE constraint failed: scopes.scope.*', e.args[0]) \

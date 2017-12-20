@@ -69,7 +69,7 @@ def add_rse(rse, deterministic=True, volatile=False, city=None, region_code=None
         new_rse.save(session=session)
     except IntegrityError:
         raise exception.Duplicate('RSE \'%(rse)s\' already exists!' % locals())
-    except DatabaseError, e:
+    except DatabaseError as e:
         raise exception.RucioException(e.args)
 
     # Add rse name as a RSE-Tag
@@ -560,7 +560,7 @@ def set_rse_transfer_limits(rse, activity, rse_id=None, rse_expression=None, max
         rse_tr_limit = session.merge(rse_tr_limit)
         rowcount = rse_tr_limit.save(session=session)
         return rowcount
-    except IntegrityError, e:
+    except IntegrityError as e:
         raise exception.RucioException(e.args)
 
 
@@ -593,7 +593,7 @@ def get_rse_transfer_limits(rse=None, activity=None, rse_id=None, session=None):
                                                     'transfers': limit.transfers,
                                                     'waitings': limit.waitings}
         return limits
-    except IntegrityError, e:
+    except IntegrityError as e:
         raise exception.RucioException(e.args)
 
 
@@ -615,7 +615,7 @@ def delete_rse_transfer_limits(rse, activity=None, rse_id=None, session=None):
             query = query.filter_by(activity=activity)
         rowcount = query.delete()
         return rowcount
-    except IntegrityError, e:
+    except IntegrityError as e:
         raise exception.RucioException(e.args)
 
 
@@ -903,7 +903,7 @@ def update_protocols(rse, scheme, data, hostname, port, session=None):
         elif 'may not be NULL' in e.args[0] or "cannot be null" in e.args[0]:
             raise exception.InvalidObject('Missing values: %s' % e.args[0])
         raise e
-    except DatabaseError, e:
+    except DatabaseError as e:
         if match('.*DatabaseError.*ORA-01407: cannot update .*RSE_PROTOCOLS.*IMPL.*to NULL.*', e.args[0]):
             raise exception.InvalidObject('Invalid values !')
         raise e

@@ -10,14 +10,15 @@
  - Ralph Vigne, <ralph.vigne@cern.ch>, 2012-2014
  - Mario Lassnig, <mario.lassnig@cern.ch>, 2017
 '''
+from __future__ import absolute_import
 
 from subprocess import call
 from urlparse import urlparse
 # IMPORTANT: If the order of the S3 imports is changed, they fail!
-from S3.Exceptions import S3Error, InvalidFileError
-from S3.S3 import S3
-from S3.Config import Config
-from S3.S3Uri import S3Uri
+from .S3.Exceptions import S3Error, InvalidFileError
+from .S3.S3 import S3
+from .S3.Config import Config
+from .S3.S3Uri import S3Uri
 
 from rucio.common import exception
 from rucio.rse.protocols import protocol

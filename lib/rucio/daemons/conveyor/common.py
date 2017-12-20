@@ -77,7 +77,7 @@ def submit_transfer(external_host, job, submitter='submitter', process=0, thread
         record_timer('daemons.conveyor.%s.submit_bulk_transfer.per_file' % submitter, (time.time() - ts) * 1000 / len(job['files']))
         record_counter('daemons.conveyor.%s.submit_bulk_transfer' % submitter, len(job['files']))
         record_timer('daemons.conveyor.%s.submit_bulk_transfer.files' % submitter, len(job['files']))
-    except Exception, ex:
+    except Exception as ex:
         logging.error("Failed to submit a job with error %s: %s" % (str(ex), traceback.format_exc()))
 
     # register transfer
@@ -236,7 +236,7 @@ def get_conveyor_rses(rses=None, include_rses=None, exclude_rses=None):
     if include_rses:
         try:
             parsed_rses = parse_expression(include_rses, session=None)
-        except InvalidRSEExpression, e:
+        except InvalidRSEExpression as e:
             logging.error("Invalid RSE exception %s to include RSEs" % (include_rses))
         else:
             for rse in parsed_rses:
@@ -249,7 +249,7 @@ def get_conveyor_rses(rses=None, include_rses=None, exclude_rses=None):
     if exclude_rses:
         try:
             parsed_rses = parse_expression(exclude_rses, session=None)
-        except InvalidRSEExpression, e:
+        except InvalidRSEExpression as e:
             logging.error("Invalid RSE exception %s to exclude RSEs: %s" % (exclude_rses, e))
         else:
             working_rses = [rse for rse in working_rses if rse not in parsed_rses]

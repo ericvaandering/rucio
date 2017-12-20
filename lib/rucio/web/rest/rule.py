@@ -10,6 +10,7 @@
   - Martin Barisits, <martin.barisits@cern.ch>, 2013-2017
   - Cedric Serfon, <cedric.serfon@cern.ch>, 2015, 2017
 '''
+from __future__ import print_function
 
 from logging import getLogger, StreamHandler, DEBUG
 from json import dumps, loads
@@ -135,7 +136,7 @@ class Rule:
             raise generate_http_error(401, 'UnsupportedOperation', error.args[0][0])
         except RuleNotFound as error:
             raise generate_http_error(404, 'RuleNotFound', error.args[0][0])
-        except Exception, error:
+        except Exception as error:
             raise InternalError(error)
         raise OK()
 
@@ -168,7 +169,7 @@ class AllRule:
         except RuleNotFound as error:
             raise generate_http_error(404, 'RuleNotFound', error.args[0][0])
         except Exception as error:
-            print format_exc()
+            print(format_exc())
             raise InternalError(error)
 
     def POST(self):
@@ -282,9 +283,9 @@ class AllRule:
             raise generate_http_error(409, 'InvalidObject', error.args[0])
         except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0])
-        except Exception, error:
-            print error
-            print format_exc()
+        except Exception as error:
+            print(error)
+            print(format_exc())
             raise InternalError(error)
 
         raise Created(dumps(rule_ids))
@@ -358,8 +359,8 @@ class ReduceRule:
         except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0])
         except Exception as error:
-            print error
-            print format_exc()
+            print(error)
+            print(format_exc())
             raise InternalError(error)
 
         raise Created(dumps(rule_ids))
@@ -401,8 +402,8 @@ class MoveRule:
         except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0])
         except Exception as error:
-            print error
-            print format_exc()
+            print(error)
+            print(format_exc())
             raise InternalError(error)
 
         raise Created(dumps(rule_ids))

@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Copyright European Organization for Nuclear Research (CERN)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -131,7 +132,7 @@ def adler32(file):
     """
 
     # adler starting value is _not_ 0
-    adler = 1L
+    adler = 1
 
     try:
         openFile = open(file, 'rb')
@@ -249,7 +250,7 @@ def generate_http_error(status_code, exc_cls, exc_msg):
     try:
         return HTTPError(status, headers=headers, data=render_json(**data))
     except:
-        print {'Content-Type': 'application/octet-stream', 'ExceptionClass': exc_cls, 'ExceptionMessage': str(exc_msg).strip()}
+        print({'Content-Type': 'application/octet-stream', 'ExceptionClass': exc_cls, 'ExceptionMessage': str(exc_msg).strip()})
         raise
 
 

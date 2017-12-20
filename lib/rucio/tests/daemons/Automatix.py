@@ -88,7 +88,7 @@ def upload(files, scope, metadata, rse, account, source_dir, worker_number, tota
             logging.error(prepend_str + 'Upload operation to %s failed, removing leftovers' % (rse))
             rsemgr.delete(rse_info, lfns=lfns)
             return False
-    except Exception, error:
+    except Exception as error:
         logging.error(prepend_str + '%s' % (str(error)))
         return False
     logging.info(prepend_str + 'Files successfully copied on %s' % (rse))
@@ -100,7 +100,7 @@ def upload(files, scope, metadata, rse, account, source_dir, worker_number, tota
             client.add_dataset(scope=dsn['scope'], name=dsn['name'], rules=[{'account': account, 'copies': 1, 'rse_expression': rse, 'grouping': 'DATASET', 'activity': 'Functional Test'}], meta=metadata, lifetime=dataset_lifetime)
             client.add_files_to_dataset(scope=dsn['scope'], name=dsn['name'], files=list_files, rse=rse)
             logging.info(prepend_str + 'Upload operation for %s:%s done' % (dsn['scope'], dsn['name']))
-        except Exception, error:
+        except Exception as error:
             logging.error(prepend_str + 'Failed to upload %(files)s' % locals())
             logging.error(prepend_str + '%s' % (str(error)))
             logging.error(prepend_str + 'Removing files from the Storage')
@@ -112,7 +112,7 @@ def upload(files, scope, metadata, rse, account, source_dir, worker_number, tota
             client.add_replicas(files=list_files, rse=rse)
             client.add_replication_rule(list_files, copies=1, rse_expression=rse, activity='Functional Test')
             logging.info(prepend_str + 'Upload operation for %s done' % (str(list_files)))
-        except Exception, error:
+        except Exception as error:
             logging.error(prepend_str + 'Failed to upload %(files)s' % locals())
             logging.error(prepend_str + '%s' % (str(error)))
             logging.error(prepend_str + 'Removing files from the Storage')

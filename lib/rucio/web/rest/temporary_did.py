@@ -8,6 +8,7 @@
 # Authors:
 # - Vincent Garonne, <vincent.garonne@cern.ch>, 2016
 
+from __future__ import print_function
 from json import loads
 from traceback import format_exc
 from web import application, ctx, data, Created, InternalError, loadhook
@@ -32,10 +33,10 @@ class BulkDIDS(RucioController):
 
         try:
             add_temporary_dids(dids=dids, issuer=ctx.env.get('issuer'))
-        except RucioException, e:
+        except RucioException as e:
             raise generate_http_error(500, e.__class__.__name__, e.args[0][0])
-        except Exception, e:
-            print format_exc()
+        except Exception as e:
+            print(format_exc())
             raise InternalError(e)
         raise Created()
 

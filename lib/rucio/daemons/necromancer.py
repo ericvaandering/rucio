@@ -71,7 +71,7 @@ def necromancer(thread=0, bulk=5, once=False):
                     try:
                         update_rules_for_lost_replica(scope=scope, name=name, rse_id=rse_id, nowait=True)
                         monitor.record_counter(counters='necromancer.badfiles.lostfile', delta=1)
-                    except DatabaseException, error:
+                    except DatabaseException as error:
                         logging.info(prepend_str + '%s' % (str(error)))
 
                 else:
@@ -79,7 +79,7 @@ def necromancer(thread=0, bulk=5, once=False):
                     try:
                         update_rules_for_bad_replica(scope=scope, name=name, rse_id=rse_id, nowait=True)
                         monitor.record_counter(counters='necromancer.badfiles.recovering', delta=1)
-                    except DatabaseException, error:
+                    except DatabaseException as error:
                         logging.info(prepend_str + '%s' % (str(error)))
 
             logging.info(prepend_str + 'It took %s seconds to process %s replicas' % (str(time.time() - stime), str(len(replicas))))

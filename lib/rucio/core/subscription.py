@@ -13,6 +13,7 @@
  - Cedric Serfon, <cedric.serfon@cern.ch>, 2013-2014, 2017
  - Thomas Beermann, <thomas.beermann@cern.ch>, 2014
 """
+from __future__ import print_function
 
 import datetime
 import re

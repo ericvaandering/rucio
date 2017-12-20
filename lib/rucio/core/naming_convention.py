@@ -9,6 +9,7 @@
   Authors:
   - Vincent Garonne, <vincent.garonne@cern.ch>, 2015
 """
+from __future__ import print_function
 
 from re import match, compile, error
 from sqlalchemy.exc import IntegrityError
@@ -148,5 +149,5 @@ def validate_name(scope, name, did_type, session=None):
             meta['run_number'] = int(meta['run_number'])
         return meta
 
-    print "Provided name %(name)s doesn't match the naming convention %(regexp)s" % locals()
+    print("Provided name %(name)s doesn't match the naming convention %(regexp)s" % locals())
     raise InvalidObject("Provided name %(name)s doesn't match the naming convention %(regexp)s" % locals())

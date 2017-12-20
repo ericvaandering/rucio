@@ -54,9 +54,9 @@ class LockByRSE(object):
                     yield render_json(**lock) + '\n'
             else:
                 raise InternalError('Wrong did_type specified')
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0])
-        except Exception, error:
+        except Exception as error:
             raise InternalError(error)
 
 
@@ -87,9 +87,9 @@ class LockByScopeName(object):
                     yield render_json(**lock) + '\n'
             else:
                 raise InternalError('Wrong did_type specified')
-        except RucioException, error:
+        except RucioException as error:
             raise generate_http_error(500, error.__class__.__name__, error.args[0])
-        except Exception, error:
+        except Exception as error:
             raise InternalError(error)
 
 

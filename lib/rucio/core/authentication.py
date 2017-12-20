@@ -262,7 +262,7 @@ def get_ssh_challenge_token(account, appid, ip=None, session=None):
     # Cryptographically secure random number.
     # This requires a /dev/urandom like device from the OS
     rng = random.SystemRandom()
-    crypto_rand = rng.randint(0, sys.maxint)
+    crypto_rand = rng.randint(0, sys.maxsize)
 
     # give the client 10 seconds max to sign the challenge token
     expiration = datetime.datetime.utcnow() + datetime.timedelta(seconds=10)

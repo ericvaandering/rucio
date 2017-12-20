@@ -16,6 +16,7 @@
  - Ralph Vigne, <ralph.vigne@cern.ch>, 2013-2015
  - Wen Guan, <wen.guan@cern.ch>, 2015
 '''
+from __future__ import print_function
 
 from json import dumps
 from nose.tools import raises, assert_equal, assert_true, assert_in, assert_raises
@@ -215,7 +216,7 @@ class TestRSEClient(object):
 
         tmp_scope = 'mock'
         nbfiles = 5
-        files1 = [{'scope': tmp_scope, 'name': 'file_%s' % generate_uuid(), 'bytes': 1L, 'adler32': '0cc737eb', 'meta': {'events': 10}} for i in xrange(nbfiles)]
+        files1 = [{'scope': tmp_scope, 'name': 'file_%s' % generate_uuid(), 'bytes': 1, 'adler32': '0cc737eb', 'meta': {'events': 10}} for i in xrange(nbfiles)]
         replica_client = ReplicaClient()
         replica_client.add_replicas(rse=renamed_rse, files=files1)
 
@@ -225,7 +226,7 @@ class TestRSEClient(object):
         assert_equal(dict2['availability_write'], False)
         assert_equal(dict2['availability_delete'], False)
 
-        files2 = [{'scope': tmp_scope, 'name': 'file_%s' % generate_uuid(), 'bytes': 1L, 'adler32': '0cc737eb', 'meta': {'events': 10}} for i in xrange(nbfiles)]
+        files2 = [{'scope': tmp_scope, 'name': 'file_%s' % generate_uuid(), 'bytes': 1, 'adler32': '0cc737eb', 'meta': {'events': 10}} for i in xrange(nbfiles)]
         with assert_raises(ResourceTemporaryUnavailable):
             replica_client.add_replicas(rse=renamed_rse, files=files2, ignore_availability=False)
 
@@ -301,7 +302,7 @@ class TestRSEClient(object):
                ((p['port'] == 20) and (p['domains']['lan']['read'] != 2)) or \
                ((p['port'] == 18) and (p['domains']['lan']['read'] != 1)) or \
                ((p['port'] == 17) and (p['domains']['lan']['read'] != 4)):
-                print resp
+                print(resp)
                 assert False
 
         self.client.delete_protocols(protocol_rse, scheme='MOCK')
@@ -363,7 +364,7 @@ class TestRSEClient(object):
                                                       'write': 1,
                                                       'delete': 1}},
                                           'extended_attributes': 'TheOneWithAllTheRest'})
-            except Exception, e:
+            except Exception as e:
                 self.client.delete_protocols(protocol_rse, 'MOCK_Duplicate')
                 self.client.delete_rse(protocol_rse)
                 raise e
@@ -472,7 +473,7 @@ class TestRSEClient(object):
         self.client.add_rse(protocol_rse)
         try:
             self.client.delete_protocols(protocol_rse, 'MOCK_Fail')
-        except Exception, e:
+        except Exception as e:
             self.client.delete_rse(protocol_rse)
             raise e
         self.client.delete_rse(protocol_rse)
@@ -527,7 +528,7 @@ class TestRSEClient(object):
                                   'extended_attributes': 'TheOneWithAllTheRest'})
         try:
             self.client.delete_protocols(protocol_rse, 'MOCK_Fail', hostname='an_other_host')
-        except Exception, e:
+        except Exception as e:
             self.client.delete_rse(protocol_rse)
             raise e
         self.client.delete_protocols(protocol_rse, 'MOCK_Fail', hostname='localhost')
@@ -583,7 +584,7 @@ class TestRSEClient(object):
                                   'extended_attributes': 'TheOneWithAllTheRest'})
         try:
             self.client.delete_protocols(protocol_rse, 'MOCK_Fail', hostname='localhost', port=17)
-        except Exception, e:
+        except Exception as e:
             self.client.delete_protocols(protocol_rse, protocol_id)
             self.client.delete_rse(protocol_rse)
             raise e
@@ -747,8 +748,8 @@ class TestRSEClient(object):
         for op in ['delete', 'read', 'write']:
             # resp = self.client.get_protocols(protocol_rse, operation=op, default=True, protocol_domain='lan')
             p = mgr.select_protocol(rse_attr, op)
-            print p['scheme']
-            print op
+            print(p['scheme'])
+            print(op)
             if op not in p['scheme'].lower():
                 for p in protocols:
                     self.client.delete_protocols(protocol_rse, p['scheme'])
@@ -830,7 +831,7 @@ class TestRSEClient(object):
             rse_attr = mgr.get_rse_info(protocol_rse)
             rse_attr['domain'] = ['lan']
             mgr.select_protocol(rse_attr, 'read')
-        except Exception, e:
+        except Exception as e:
             self.client.delete_protocols(protocol_rse, 'MOCK_WRITE_DELETE')
             self.client.delete_protocols(protocol_rse, 'MOCK_DELETE')
             self.client.delete_rse(protocol_rse)
@@ -862,7 +863,7 @@ class TestRSEClient(object):
             rse_attr = mgr.get_rse_info(protocol_rse)
             rse_attr['domain'] = ['FRIENDS']
             mgr.select_protocol(rse_attr, 'write')
-        except Exception, e:
+        except Exception as e:
             self.client.delete_protocols(protocol_rse, 'MOCK')
             self.client.delete_rse(protocol_rse)
             raise e
@@ -892,7 +893,7 @@ class TestRSEClient(object):
             rse_attr = mgr.get_rse_info(protocol_rse)
             rse_attr['domain'] = ['wan']
             mgr.select_protocol(rse_attr, 'write')
-        except Exception, e:
+        except Exception as e:
             self.client.delete_protocols(protocol_rse, 'MOCK')
             self.client.delete_rse(protocol_rse)
             raise e
@@ -942,7 +943,7 @@ class TestRSEClient(object):
             rse_attr = mgr.get_rse_info(protocol_rse)
             rse_attr['domain'] = ['lan']
             mgr.select_protocol(rse_attr, 'read')
-        except Exception, e:
+        except Exception as e:
             self.client.delete_protocols(protocol_rse, 'MOCK_WRITE_DELETE')
             self.client.delete_protocols(protocol_rse, 'MOCK_DELETE')
             self.client.delete_rse(protocol_rse)
@@ -1058,13 +1059,13 @@ class TestRSEClient(object):
         for p in prots:
             if p['scheme'] == 'MOCKA':
                 if p['domains']['lan']['read'] != 3:
-                    print 'MOCKA with unexpected priority'
-                    print prots
+                    print('MOCKA with unexpected priority')
+                    print(prots)
                     assert(False)
             if p['scheme'] == 'MOCKC':
                 if p['domains']['lan']['read'] != 1:
-                    print 'MOCKC with unexpected priority'
-                    print prots
+                    print('MOCKC with unexpected priority')
+                    print(prots)
                     assert(False)
         assert(True)
 
@@ -1113,7 +1114,7 @@ class TestRSEClient(object):
 
         try:
             self.client.update_protocols(protocol_rse, scheme='MOCK_UNDEFINED', hostname='localhost', port=17, data={'delete_lan': 1})
-        except Exception, e:
+        except Exception as e:
             for p in protocols:
                 self.client.delete_protocols(protocol_rse, p['scheme'])
             self.client.delete_rse(protocol_rse)
@@ -1180,19 +1181,19 @@ class TestRSEClient(object):
 
     def test_set_rse_usage(self):
         """ RSE (CLIENTS): Test the update of RSE usage."""
-        assert_equal(self.client.set_rse_usage(rse='MOCK', source='srm', used=999200L, free=800L), True)
+        assert_equal(self.client.set_rse_usage(rse='MOCK', source='srm', used=999200, free=800), True)
         usages = self.client.get_rse_usage(rse='MOCK')
         for usage in usages:
             if usage['source'] == 'srm':
                 assert_equal(usage['total'], 1000000)
-        assert_equal(self.client.set_rse_usage(rse='MOCK', source='srm', used=999920L, free=80L), True)
+        assert_equal(self.client.set_rse_usage(rse='MOCK', source='srm', used=999920, free=80), True)
         for usage in self.client.list_rse_usage_history(rse='MOCK'):
             assert_equal(usage['free'], 80)
             break
 
     def test_set_rse_limits(self):
         """ RSE (CLIENTS): Test the update of RSE limits."""
-        assert_equal(self.client.set_rse_limits(rse='MOCK', name='MinFreeSpace', value=1000000L), True)
+        assert_equal(self.client.set_rse_limits(rse='MOCK', name='MinFreeSpace', value=1000000), True)
         limits = self.client.get_rse_limits(rse='MOCK')
         assert_equal(limits['MinFreeSpace'], 1000000)
 
@@ -1255,5 +1256,5 @@ class TestRSEClient(object):
                                     parameters={'distance': 0})
 
         for distance in self.client.get_distance(source=source, destination=destination):
-            print distance
+            print(distance)
             assert_equal(distance['distance'], 0)

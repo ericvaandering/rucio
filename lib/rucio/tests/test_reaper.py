@@ -18,12 +18,12 @@ from rucio.daemons.reaper.reaper import reaper
 def test_reaper():
     """ REAPER (DAEMON): Test the reaper daemon."""
     nb_files = 30
-    file_size = 2147483648L  # 2G
+    file_size = 2147483648  # 2G
     for i in xrange(nb_files):
         replica_core.add_replica(rse='MOCK', scope='data13_hip', name='lfn' + generate_uuid(), bytes=file_size, account='root', adler32=None, md5=None)
 
-    rse_core.set_rse_usage(rse='MOCK', source='srm', used=nb_files * file_size, free=800L)
-    rse_core.set_rse_limits(rse='MOCK', name='MinFreeSpace', value=10737418240L)
+    rse_core.set_rse_usage(rse='MOCK', source='srm', used=nb_files * file_size, free=800)
+    rse_core.set_rse_limits(rse='MOCK', name='MinFreeSpace', value=10737418240)
     rse_core.set_rse_limits(rse='MOCK', name='MaxBeingDeletedFiles', value=10)
 
     rses = [rse_core.get_rse('MOCK'), ]

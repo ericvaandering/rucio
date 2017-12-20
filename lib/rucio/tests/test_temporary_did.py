@@ -26,13 +26,13 @@ def test_core_temporary_dids():
         temporary_dids.append({'scope': 'mock',
                                'name': 'object_%s' % generate_uuid(),
                                'rse': 'MOCK',
-                               'bytes': 1L,
+                               'bytes': 1,
                                'path': None})
 
     add_temporary_dids(dids=temporary_dids, account='root')
 
     compose(scope='mock', name='file_%s' % generate_uuid(), rse='MOCK',
-            bytes=10L, sources=temporary_dids, account='root',
+            bytes=10, sources=temporary_dids, account='root',
             md5=None, adler32=None, pfn=None, meta={}, rules=[],
             parent_scope=None, parent_name=None)
 
@@ -51,7 +51,7 @@ def test_client_temporary_dids():
         temporary_dids.append({'scope': 'mock',
                                'name': 'object_%s' % generate_uuid(),
                                'rse': 'MOCK',
-                               'bytes': 1L,
+                               'bytes': 1,
                                'path': None})
 
     client.add_temporary_dids(dids=temporary_dids)

@@ -90,7 +90,7 @@ def trace(payload):
                     logging.info('reconnect to ' + conn.transport._Transport__host_and_ports[0][0])
                     conn.start()
                     conn.connect(USERNAME, PASSWORD)
-            except stomp.exception.NotConnectedException, error:
+            except stomp.exception.NotConnectedException as error:
                 logging.warn('Could not connect to broker %s, try another one' %
                              conn.transport._Transport__host_and_ports[0][0])
                 t_conns.remove(conn)
@@ -105,5 +105,5 @@ def trace(payload):
             conn.send(body=report, destination=TOPIC, headers={'persistent': 'true', 'appversion': 'rucio'})
         else:
             logging.error("Unable to connect to broker. Could not send trace: %s" % report)
-    except Exception, error:
+    except Exception as error:
         logging.error(error)

@@ -11,6 +11,7 @@
 """
 Test the posix protocol
 """
+from __future__ import print_function
 
 import json
 import os
@@ -52,8 +53,8 @@ class TestRsePOSIX(object):
         prefix = data['MOCK-POSIX']['protocols']['supported']['file']['prefix']
         try:
             os.mkdir(prefix)
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
         os.system('dd if=/dev/urandom of=%s/data.raw bs=1024 count=1024' % prefix)
         cls.static_file = '%s/data.raw' % prefix
         for f in MgrTestCases.files_remote:

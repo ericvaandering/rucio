@@ -17,6 +17,7 @@
 Compatibility Wrapper for DQ2 and Rucio.
      http://svnweb.cern.ch/world/wsvn/dq2/trunk/dq2.clients/lib/dq2/clientapi/DQ2.py
 '''
+from __future__ import print_function
 # pylint: skip-file
 
 import copy
@@ -1144,7 +1145,7 @@ class DQ2Client:
         creationdate = datetime.now()
         for rule in self.client.list_did_rules(scope, dsn):
             if rule['state'] != 'OK' and (location == rule['rse_expression']):  # or location in [i['rse'] for i in self.client.list_rses(rule['rse_expression'])]):
-                print rule
+                print(rule)
                 if rule['created_at'] < creationdate:
                     id = rule['id']
                     id = '%s-%s-%s-%s-%s' % (id[0:8], id[8:12], id[12:16], id[16:20], id[20:32])
@@ -1285,7 +1286,7 @@ class DQ2Client:
                     result.append({'files': None, 'key': 'srm', 'datasets': None, 'tera': d['total'] / 1024. / 1024. / 1024. / 1024, 'giga': d['total'] / 1024. / 1024. / 1024,
                                    'mega': d['total'] / 1024. / 1024., 'bytes': d['total'], 'timestamp': str(d['updated_at']), 'value': 'total', 'location': rse})
                 except StopIteration:
-                    print 'Error'
+                    print('Error')
                 except RSENotFound:
                     # In DQ2 it does not fail if the site does not exist
                     pass
@@ -1582,7 +1583,7 @@ class DQ2Client:
                         result[lfn] = {'status': False, 'error': FileConsistencyMismatch('filesize mismatch DDM %s vs user %s' % (meta['bytes'], did['bytes']))}
                     else:
                         result[lfn] = {'status': False, 'error': FileAlreadyExists('File %s:%s already exists' % (did['scope'], did['name']))}
-                except UnsupportedOperation, e:
+                except UnsupportedOperation as e:
                     result[lfn] = {'status': False, 'error': e}
         return result
 

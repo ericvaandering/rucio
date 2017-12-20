@@ -11,6 +11,7 @@
 # - Yun-Pin Sun, <yun-pin.sun@cern.ch>, 2012
 # - Cedric Serfon, <cedric.serfon@cern.ch>, 2014
 
+from __future__ import print_function
 import base64
 
 from re import search
@@ -95,10 +96,10 @@ class UserPass(RucioController):
             result = get_auth_token_user_pass(account, username, password, appid, ip)
         except AccessDenied:
             raise generate_http_error(401, 'CannotAuthenticate', 'Cannot authenticate to account %(account)s with given credentials' % locals())
-        except RucioException, e:
+        except RucioException as e:
             raise generate_http_error(500, e.__class__.__name__, e.args[0])
-        except Exception, e:
-            print format_exc()
+        except Exception as e:
+            print(format_exc())
             raise InternalError(e)
 
         if not result:
@@ -253,14 +254,14 @@ class x509(RucioController):
         try:
             result = get_auth_token_x509(account, dn, appid, ip)
         except AccessDenied:
-            print 'Cannot Authenticate', account, dn, appid, ip
+            print('Cannot Authenticate', account, dn, appid, ip)
             raise generate_http_error(401, 'CannotAuthenticate', 'Cannot authenticate to account %(account)s with given credentials' % locals())
         except IdentityError:
-            print 'Cannot Authenticate', account, dn, appid, ip
+            print('Cannot Authenticate', account, dn, appid, ip)
             raise generate_http_error(401, 'CannotAuthenticate', 'No default account set for %(dn)s' % locals())
 
         if not result:
-            print 'Cannot Authenticate', account, dn, appid, ip
+            print('Cannot Authenticate', account, dn, appid, ip)
             raise generate_http_error(401, 'CannotAuthenticate', 'Cannot authenticate to account %(account)s with given credentials' % locals())
 
         header('X-Rucio-Auth-Token', result)
@@ -331,10 +332,10 @@ class SSH(RucioController):
             result = get_auth_token_ssh(account, signature, appid, ip)
         except AccessDenied:
             raise generate_http_error(401, 'CannotAuthenticate', 'Cannot authenticate to account %(account)s with given credentials' % locals())
-        except RucioException, e:
+        except RucioException as e:
             raise generate_http_error(500, e.__class__.__name__, e.args[0])
-        except Exception, e:
-            print format_exc()
+        except Exception as e:
+            print(format_exc())
             raise InternalError(e)
 
         if not result:
@@ -398,10 +399,10 @@ class SSHChallengeToken(RucioController):
 
         try:
             result = get_ssh_challenge_token(account, appid, ip)
-        except RucioException, e:
+        except RucioException as e:
             raise generate_http_error(500, e.__class__.__name__, e.args[0])
-        except Exception, e:
-            print format_exc()
+        except Exception as e:
+            print(format_exc())
             raise InternalError(e)
 
         if not result:
