@@ -72,10 +72,10 @@ class DIDClient(BaseClient):
 
         :param scope: The scope name.
         :param name: The data identifier name.
-        :paran type: The data identifier type (file|dataset|container).
+        :param type: The data identifier type (file|dataset|container).
         :param statuses: Dictionary with statuses, e.g.g {'monotonic':True}.
-        :meta: Meta-data associated with the data identifier is represented using key/value pairs in a dictionary.
-        :rules: Replication rules associated with the data identifier. A list of dictionaries, e.g., [{'copies': 2, 'rse_expression': 'TIERS1'}, ].
+        :param meta: Meta-data associated with the data identifier is represented using key/value pairs in a dictionary.
+        :param rules: Replication rules associated with the data identifier. A list of dictionaries, e.g., [{'copies': 2, 'rse_expression': 'TIERS1'}, ].
         :param lifetime: DID's lifetime (in seconds).
         :param dids: The content.
         :param rse: The RSE name when registering replicas.
