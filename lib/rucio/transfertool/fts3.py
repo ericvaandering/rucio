@@ -10,6 +10,7 @@
 # - Vincent Garonne, <vincent.garonne@cern.ch>, 2013-2014
 # - Wen Guan, <wen.guan@cern.ch>, 2014-2016
 # - Martin Barisits, <martin.barisits@cern.ch>, 2017
+# - Eric Vaandering, <ewv@fnal.gov>, 2018
 
 import datetime
 import json
@@ -175,6 +176,12 @@ def submit_transfers(transfers, job_metadata):
                                   'source_spacetoken': transfer['src_spacetoken'] if transfer['src_spacetoken'] else None,
                                   'overwrite': transfer['overwrite'],
                                   'priority': 3}}
+
+        # Don't put optional & missing keys in the parameters
+        if transfer['dest_spacetoken']:
+            params_dict['params'].update({'spacetoken': transfer['dest_spacetoken']})
+        if transfer['src_spacetoken']:
+            params_dict['params'].update({'source_spacetoken': transfer['src_spacetoken']})
 
         r = None
         params_str = json.dumps(params_dict)
