@@ -145,6 +145,7 @@ def stager(once=False, rses=[], mock=False,
                     for job in grouped_jobs[external_host]:
                         # submit transfers
                         # job_requests = makeRequests(submit_transfer, args_list=[((external_host, job, 'transfer_submitter', process, thread), {})])
+                        logging.info('EWV: Submitting job to FTS %s', job)
                         job_requests = makeRequests(submit_transfer, args_list=[((), {'external_host': external_host, 'job': job, 'submitter': 'transfer_submitter', 'process': process, 'thread': hb['assign_thread']})])
                         [threadPool.putRequest(job_req) for job_req in job_requests]
                 threadPool.wait()

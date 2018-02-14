@@ -185,7 +185,7 @@ def submit_transfers(transfers, job_metadata):
 
         r = None
         params_str = json.dumps(params_dict)
-
+        logging.warn('EWV: Submitting to FTS with %s', params_str)
         transfer_host = transfer['external_host']
         if transfer_host.startswith('https://'):
             try:
