@@ -10,6 +10,7 @@
 # - Martin Barisits, <martin.barisits@cern.ch>, 2014
 # - Cedric Serfon, <cedric.serfon@cern.ch>, 2015-2016
 # - Wen Guan, <wen.guan>, 2016
+# - Eric Vaandering, <ewv@fnal.gov>, 2018
 #
 # PY3K COMPATIBLE
 
@@ -141,6 +142,7 @@ class RequestState(DeclEnum):
     MISMATCH_SCHEME = 'M', 'MISMATCH_SCHEME'
     SUSPEND = 'U', 'SUSPEND'
     WAITING = 'W', 'WAITING'
+    TAPE_CHECKING = 'C', 'TAPE_CHECKING'  # Optional state to check tape archive bit
 
 
 class RequestType(DeclEnum):

@@ -13,6 +13,7 @@
 # - Joaquin Bogado, <jbogadog@cern.ch>, 2016
 # - Thomas Beermann, <thomas.beermann@cern.ch>, 2016
 # - Cedric Serfon, <cedric.serfon@cern.ch>, 2017-2018
+# - Eric Vaandering, <ewv@fnal.gov>, 2018
 
 import datetime
 import json
@@ -25,6 +26,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import asc, bindparam, text, false, true
 
 from rucio.common.exception import RequestNotFound, RucioException, UnsupportedOperation
+from rucio.common.rse_storage_type import get_rse_storage_type
 from rucio.common.utils import generate_uuid, chunks
 from rucio.core import transfer_limits as transfer_limits_core
 from rucio.core.message import add_message
@@ -39,7 +41,6 @@ from rucio.transfertool.fts3 import FTS3Transfertool
 The core request.py is specifically for handling requests.
 Requests accessed by external_id (So called transfers), are covered in the core transfer.py
 """
-
 
 def should_retry_request(req):
     """
@@ -958,7 +959,7 @@ def update_requests_priority(priority, filter, session=None):
 
 
 @transactional_session
-def update_request_state(response, logging_prepend_str=None, session=None):
+def update_request_state(response, logging_prepend_str=None, session=None, check_tape=False):
     """
     Used by poller and consumer to update the internal state of requests,
     after the response by the external transfertool.
@@ -966,6 +967,7 @@ def update_request_state(response, logging_prepend_str=None, session=None):
     :param response:              The transfertool response dictionary, retrieved via request.query_request().
     :param logging_prepend_str:   String to prepend to the logging
     :param session:               The database session to use.
+    :param check_tape:            Move done tape transfers to check_tape state instead of done
     :returns commit_or_rollback:  Boolean.
     """
 
@@ -988,6 +990,7 @@ def update_request_state(response, logging_prepend_str=None, session=None):
                 src_url = response.get('src_url', None)
                 src_rse = response.get('src_rse', None)
                 src_rse_id = response.get('src_rse_id', None)
+                dest_rse_id = response.get('dest_rse_id', None)
                 started_at = response.get('started_at', None)
                 transferred_at = response.get('transferred_at', None)
                 scope = response.get('scope', None)
@@ -1004,8 +1007,16 @@ def update_request_state(response, logging_prepend_str=None, session=None):
                         logging.debug(prepend_str + 'Correct RSE: %s for source surl: %s' % (src_rse_name, src_url))
                 err_msg = get_transfer_error(response['new_state'], response['reason'] if 'reason' in response else None)
 
+                new_state = response['new_state']
+
+                # If check_tape, divert request state from DONE to TAPE_CHECKING for tape RSEs
+                if new_state == RequestState.DONE and check_tape:
+                    rse_type = get_rse_storage_type(dest_rse_id)
+                    if rse_type.lower() == 'tape':
+                        new_state = RequestState.TAPE_CHECKING
+
                 set_request_state(response['request_id'],
-                                  response['new_state'],
+                                  new_state,
                                   transfer_id=transfer_id,
                                   started_at=started_at,
                                   transferred_at=transferred_at,
