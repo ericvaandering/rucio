@@ -48,6 +48,7 @@ from rucio.common.config import config_get
 from rucio.common.exception import DatabaseException, TransferToolTimeout, TransferToolWrongAnswer
 from rucio.common.utils import chunks
 from rucio.core import heartbeat, transfer as transfer_core, request as request_core
+from rucio.core.config import get as core_get
 from rucio.core.monitor import record_timer, record_counter
 from rucio.db.sqla.constants import RequestState, RequestType
 
@@ -63,6 +64,8 @@ graceful_stop = threading.Event()
 
 datetime.datetime.strptime('', '')
 
+# Move to CHECK_TAPE status instead of DONE if a tape RSE
+check_tape_status = core_get(section='conveyor', option='check_tape_status', session=None)
 
 def poller(once=False, activities=None, sleep_time=60,
            fts_bulk=100, db_bulk=1000, older_than=60, activity_shares=None):
@@ -261,7 +264,7 @@ def poll_transfers(external_host, xfers, prepend_str='', request_ids=None, timeo
                 else:
                     for request_id in transf_resp:
                         if request_id in request_ids:
-                            ret = request_core.update_request_state(transf_resp[request_id], logging_prepend_str=prepend_str)
+                            ret = request_core.update_request_state(transf_resp[request_id], logging_prepend_str=prepend_str, check_tape=check_tape_status)
                             # if True, really update request content; if False, only touch request
                             if ret:
                                 cnt += 1
