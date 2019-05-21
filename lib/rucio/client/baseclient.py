@@ -301,8 +301,11 @@ class BaseClient(object):
         if headers is not None:
             hds.update(headers)
 
+        print("Sending real request")
+
         result = None
         for retry in range(self.AUTH_RETRIES + 1):
+            print("Retry %s" % retry)
             try:
                 if type == 'GET':
                     result = self.session.get(url, headers=hds, verify=self.ca_cert, timeout=self.timeout, params=params, stream=True)
@@ -315,6 +318,8 @@ class BaseClient(object):
                 else:
                     return
             except ConnectionError as error:
+                print("Failed %s" % str(error))
+
                 LOG.warning('ConnectionError: ' + str(error))
                 self.ca_cert = False
                 if retry > self.request_retries:
