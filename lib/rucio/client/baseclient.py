@@ -70,7 +70,9 @@ from datetime import datetime
 old_f = sys.stdout
 class F:
     def write(self, x):
-        if x != '\n':
+        if x == '\n':
+            old_f.write('\n')
+        else:
             old_f.write("[%s] %s" % ('Test', x))
 sys.stdout = F()
 
