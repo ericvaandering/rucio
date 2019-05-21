@@ -66,7 +66,7 @@ disable_warnings()
 # Extra modules: Only imported if available
 EXTRA_MODULES = {'requests_kerberos': False}
 
-import datetime
+from datetime import datetime
 old_f = sys.stdout
 class F:
     def write(self, x):
