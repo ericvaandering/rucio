@@ -132,7 +132,7 @@ class BaseClient(object):
         :param creds: a dictionary with credentials needed for authentication.
         :param user_agent: indicates the client
         """
-
+        print("Initializing with timeout %s" % timeout)
         self.host = rucio_host
         self.list_hosts = []
         self.auth_host = auth_host
