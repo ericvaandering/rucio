@@ -73,7 +73,7 @@ class F:
         if x == '\n':
             old_f.write('\n')
         else:
-            old_f.write("[%s] %s" % ('Test', x))
+            old_f.write("[%s] %s" % (str(datetime.now()), x))
 sys.stdout = F()
 
 for extra_module in EXTRA_MODULES:
