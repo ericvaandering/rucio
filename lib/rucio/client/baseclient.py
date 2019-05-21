@@ -401,7 +401,6 @@ class BaseClient(object):
             cert = (client_cert, client_key)
 
         result = None
-        self.ca_cert = False
         for retry in range(self.AUTH_RETRIES + 1):
             print("Retry X509 token %s" % retry)
 
