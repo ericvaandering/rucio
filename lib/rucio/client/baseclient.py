@@ -66,6 +66,13 @@ disable_warnings()
 # Extra modules: Only imported if available
 EXTRA_MODULES = {'requests_kerberos': False}
 
+import datetime
+old_f = sys.stdout
+class F:
+    def write(self, x):
+        old_f.write(x.replace("\n", " [%s]\n" % str(datetime.now())))
+sys.stdout = F()
+
 for extra_module in EXTRA_MODULES:
     try:
         imp.find_module(extra_module)
@@ -366,6 +373,8 @@ class BaseClient(object):
 
         :returns: True if the token was successfully received. False otherwise.
         """
+
+        print("Getting X509 token")
 
         headers = {'X-Rucio-Account': self.account}
 
