@@ -409,7 +409,7 @@ class BaseClient(object):
                                           verify=self.ca_cert)
                 break
             except ConnectionError as error:
-                print("Got a connection error")
+                print("Got a connection error %s" % str(error))
 
                 if 'alert certificate expired' in str(error):
                     raise CannotAuthenticate(str(error))
@@ -432,6 +432,8 @@ class BaseClient(object):
 
         self.auth_token = result.headers['x-rucio-auth-token']
         LOG.debug('got new token')
+        print("Got new token succeeded")
+
         return True
 
     def __get_token_ssh(self):
