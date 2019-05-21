@@ -70,7 +70,7 @@ from datetime import datetime
 old_f = sys.stdout
 class F:
     def write(self, x):
-        old_f.write("[%s] %s\n" % (str(datetime.now()), x))
+        old_f.write("[%s] %s" % (str(datetime.now()), x))
 sys.stdout = F()
 
 for extra_module in EXTRA_MODULES:
