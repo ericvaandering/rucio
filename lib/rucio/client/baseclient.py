@@ -402,11 +402,15 @@ class BaseClient(object):
 
         result = None
         for retry in range(self.AUTH_RETRIES + 1):
+            print("Retry X509 token %s" % retry)
+
             try:
                 result = self.session.get(url, headers=headers, cert=cert,
                                           verify=self.ca_cert)
                 break
             except ConnectionError as error:
+                print("Got a connection error")
+
                 if 'alert certificate expired' in str(error):
                     raise CannotAuthenticate(str(error))
                 LOG.warning('ConnectionError: ' + str(error))
