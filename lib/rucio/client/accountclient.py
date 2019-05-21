@@ -93,6 +93,8 @@ class AccountClient(BaseClient):
         :raises AccountNotFound: if account doesn't exist.
         """
 
+        print("Getting account %s " % account)
+
         path = '/'.join([self.ACCOUNTS_BASEURL, account])
         url = build_url(choice(self.list_hosts), path=path)
 
