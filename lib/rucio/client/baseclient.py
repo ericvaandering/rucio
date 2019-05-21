@@ -308,7 +308,7 @@ class BaseClient(object):
 
         result = None
         for retry in range(self.AUTH_RETRIES + 1):
-            print("Retry %s" % retry)
+            print("Retry %s with timeout %s" % (retry, self.timeout))
             try:
                 if type == 'GET':
                     result = self.session.get(url, headers=hds, verify=self.ca_cert, timeout=self.timeout, params=params, stream=True)
