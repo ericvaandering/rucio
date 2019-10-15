@@ -179,7 +179,6 @@ def deliver_messages(once=False, brokers_resolved=None, thread=0, bulk=1000, del
         use_ssl = config_get_bool('messaging-hermes', 'use_ssl')
     except:
         logging.info('[broker] could not find use_ssl in configuration -- please update your rucio.cfg')
-
     port = config_get_int('messaging-hermes', 'port')
     vhost = config_get('messaging-hermes', 'broker_virtual_host', raise_exception=False)
     if not use_ssl:
@@ -197,6 +196,8 @@ def deliver_messages(once=False, brokers_resolved=None, thread=0, bulk=1000, del
                                      timeout=broker_timeout)
         else:
             logging.info('[broker] setting up ssl cert/key authentication: %s' % broker)
+            logging.info('[ewv] connection details %s and %s' % (vhost, broker_timeout))
+
             con = stomp.Connection12(host_and_ports=[(broker, port)],
                                      use_ssl=True,
                                      ssl_key_file=config_get('messaging-hermes', 'ssl_key_file'),
