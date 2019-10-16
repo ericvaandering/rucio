@@ -163,10 +163,13 @@ class HermesListener(stomp.ConnectionListener):
 
 
 def deliver_messages(once=False, brokers_resolved=None, thread=0, bulk=1000, delay=10,
-                     broker_timeout=3, broker_retry=3):
+                     broker_timeout=30, broker_retry=3):
     '''
     Main loop to deliver messages to a broker.
     '''
+
+    broker_timeout = None
+    delay=10
     logging.info('[broker] starting - threads (%i) bulk (%i)', thread, bulk)
 
     if not brokers_resolved:
@@ -256,11 +259,14 @@ def deliver_messages(once=False, brokers_resolved=None, thread=0, bulk=1000, del
                                              host_and_ports)
                                 conn.connect(username, password, wait=True)
                             else:
+                                logging.info('[ewv] no longer connected, reconnecting on SSL %s ' % host_and_ports)
                                 logging.info('[broker] %i:%i - connecting with SSL to %s',
                                              heartbeat['assign_thread'],
                                              heartbeat['nr_threads'],
                                              host_and_ports)
                                 conn.connect(wait=True)
+                        host_and_ports = conn.transport._Transport__host_and_ports[0][0]
+                        logging.info('[ewv] still connected %s' % host_and_ports)
 
                         conn.send(body=json.dumps({'event_type': str(message['event_type']).lower(),
                                                    'payload': message['payload'],
