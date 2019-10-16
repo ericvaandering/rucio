@@ -168,7 +168,7 @@ def deliver_messages(once=False, brokers_resolved=None, thread=0, bulk=1000, del
     Main loop to deliver messages to a broker.
     '''
 
-    broker_timeout = None
+    # broker_timeout = None
     delay=10
     logging.info('[broker] starting - threads (%i) bulk (%i)', thread, bulk)
 
@@ -178,6 +178,7 @@ def deliver_messages(once=False, brokers_resolved=None, thread=0, bulk=1000, del
 
     if not broker_timeout:  # Allow zero in config
         broker_timeout = None
+    logging.info('[ewv] broker timeout %s' % broker_timeout)
 
     logging.info('[broker] checking authentication method')
     use_ssl = True
