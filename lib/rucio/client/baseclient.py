@@ -293,9 +293,10 @@ class BaseClient(object):
 
         if headers is not None:
             hds.update(headers)
-
+        print('Making request type %s of %s with params %s' % (type, url, params))
         result = None
         for retry in range(self.AUTH_RETRIES + 1):
+            print('Retry is %s' % retry)
             try:
                 if type == 'GET':
                     result = self.session.get(url, headers=hds, verify=self.ca_cert, timeout=self.timeout, params=params, stream=True)
@@ -308,6 +309,7 @@ class BaseClient(object):
                 else:
                     return
             except ConnectionError as error:
+                print('Got a connection error')
                 LOG.warning('ConnectionError: ' + str(error))
                 self.ca_cert = False
                 if retry > self.request_retries:
@@ -315,6 +317,7 @@ class BaseClient(object):
                 continue
 
             if result is not None and result.status_code == codes.unauthorized:  # pylint: disable-msg=E1101
+                print("Trying to get a token")
                 self.session = session()
                 self.__get_token()
                 hds['X-Rucio-Auth-Token'] = self.auth_token
@@ -323,6 +326,7 @@ class BaseClient(object):
 
         if result is None:
             raise ServerConnectionException
+        print("Success, returning result")
         return result
 
     def __get_token_userpass(self):
