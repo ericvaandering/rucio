@@ -87,7 +87,7 @@ class Default(protocol.RSEProtocol):
 
     def __init__(self, protocol_attr, rse_settings):
         super(Default, self).__init__(protocol_attr, rse_settings)
-        self.session = requests.session()
+        self.session = requests.Session()
         self.timeout = 300
         self.cert = None
         self.renaming = False
