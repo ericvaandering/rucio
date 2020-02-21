@@ -296,6 +296,7 @@ def bulk_group_transfer(transfers, policy='rule', group_bulk=200, source_strateg
 
         logging.info('EWV Selection strategy: %s', t_file['selection_strategy'])
         logging.info('EWV SS from: %s %s %s', source_strategy,  default_source_strategy, activity_source_strategy)
+        logging.info('EWV SS type: %s %s %s', type(source_strategy),  type(default_source_strategy), type(activity_source_strategy))
 
 
         if verify_checksum != 'none':
