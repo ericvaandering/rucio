@@ -75,6 +75,7 @@ def submitter(once=False, rses=None, mock=False,
     """
     Main loop to submit a new transfer primitive to a transfertool.
     """
+    logging.info('EWV submitter SS %s of type %s', source_strategy, type(source_strategy))
 
     try:
         scheme = config_get('conveyor', 'scheme')
@@ -172,6 +173,7 @@ def submitter(once=False, rses=None, mock=False,
                 # group transfers
                 logging.info('%s Starting to group transfers for %s', prepend_str, activity)
                 start_time = time.time()
+                logging.info('EWV submitter loop SS %s of type %s', source_strategy, type(source_strategy))
 
                 grouped_jobs = bulk_group_transfer(transfers, group_policy, group_bulk, source_strategy, max_time_in_queue)
                 record_timer('daemons.conveyor.transfer_submitter.bulk_group_transfer', (time.time() - start_time) * 1000 / (len(transfers) if transfers else 1))

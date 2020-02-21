@@ -240,6 +240,8 @@ def bulk_group_transfer(transfers, policy='rule', group_bulk=200, source_strateg
     grouped_transfers = {}
     grouped_jobs = {}
 
+    logging.info('EWV SS %s of type %s', source_strategy, type(source_strategy))
+
     try:
         default_source_strategy = get(section='conveyor', option='default-source-strategy')
     except ConfigNotFound:
