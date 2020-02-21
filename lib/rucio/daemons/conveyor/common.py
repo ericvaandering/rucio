@@ -294,6 +294,10 @@ def bulk_group_transfer(transfers, policy='rule', group_bulk=200, source_strateg
                   'request_type': transfer['file_metadata'].get('request_type', None),
                   'activity': str(transfer['file_metadata']['activity'])}
 
+        logging.info('EWV Selection strategy: %s', t_file['selection_strategy'])
+        logging.info('EWV SS from: %s %s %s', source_strategy,  default_source_strategy, activity_source_strategy)
+
+
         if verify_checksum != 'none':
             if verify_checksum == 'both':
                 set_checksum_value(t_file, common_checksum_names)
