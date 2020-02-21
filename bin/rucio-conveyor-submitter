@@ -105,6 +105,8 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, stop)
     parser = get_parser()
     args = parser.parse_args()
+    print('EWV run SS %s of type %s', args.source_strategy, type(args.source_strategy))
+
     try:
         run(once=args.run_once,
             bulk=args.bulk,
