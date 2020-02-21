@@ -79,7 +79,7 @@ A tranfer request got created by executing the transfer. Depending on the transf
                         help='Group control: policy used to group. enum{rule, dest, src_dest, rule_src_dest, activity_dest, activity_src_dest}')
     parser.add_argument("--mock", action="store_true", default=False,
                         help='Fake source replicas for requests')
-    parser.add_argument('--source-strategy', action="store", default=None, type=str,
+    parser.add_argument('--source-strategy', action="store", default='', type=str,
                         help='Source strategy. Overload the strategy defined in config DB.')
     parser.add_argument('--exclude-rses', action="store", default=None, type=str,
                         help='RSE expression to exclude')
@@ -97,6 +97,7 @@ A tranfer request got created by executing the transfer. Depending on the transf
                         help='Maximum source replicas per FTS job')
     parser.add_argument("--retry-other-fts", action="store_true", default=False,
                         help='retry on a different FTS')
+
     return parser
 
 
@@ -105,7 +106,14 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, stop)
     parser = get_parser()
     args = parser.parse_args()
+
+    if not args.source_strategy:
+        args.source_strategy = None
+
     print('EWV run SS %s of type %s' % (args.source_strategy, type(args.source_strategy)))
+
+
+
 
     try:
         run(once=args.run_once,
