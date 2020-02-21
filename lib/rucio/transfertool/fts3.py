@@ -157,6 +157,7 @@ class FTS3Transfertool(Transfertool):
                 transfer_id = expected_transfer_id
                 logging.warn("Failed to submit transfer to %s, will use expected transfer id %s, error: %s", self.external_host, transfer_id, post_result.text if post_result is not None else post_result)
             else:
+                logging.warn("FTS params were %s", params_str)
                 logging.warn("Failed to submit transfer to %s, error: %s", self.external_host, post_result.text if post_result is not None else post_result)
             record_counter('transfertool.fts3.%s.submission.failure' % self.__extract_host(self.external_host), len(files))
 
