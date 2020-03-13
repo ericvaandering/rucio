@@ -662,6 +662,9 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
             list_hops = get_hops(source_rse_id, dest_rse_id, include_multihop=core_config_get('transfers', 'use_multihop', default=False, expiration_time=600, session=session), multihop_rses=multihop_rses, session=session)
             if len(list_hops) > 1:
                 logging.debug('From %s to %s requires multihop: %s', source_rse_id, dest_rse_id, list_hops)
+                if source_rse_id not in rses_info:
+                    logging.info('EWV: Filling RSEs info for secondary source %s', source_rse_id)
+                    rses_info[source_rse_id] = rsemgr.get_rse_info(rse=rse_mapping[source_rse_id], session=session)
                 multihop = True
                 multi_hop_dict[req_id] = (list_hops, dict_attributes, retry_count)
         except NoDistance:
