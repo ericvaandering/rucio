@@ -131,7 +131,7 @@ def submitter(once=False, rses=None, mock=False,
     while not graceful_stop.is_set():
 
         try:
-            heart_beat = heartbeat.live(executable, hostname, pid, hb_thread, older_than=3600)
+            heart_beat = heartbeat.live(executable, hostname, pid, hb_thread, older_than=60)
             prepend_str = 'Thread [%i/%i] : ' % (heart_beat['assign_thread'], heart_beat['nr_threads'])
 
             if activities is None:
