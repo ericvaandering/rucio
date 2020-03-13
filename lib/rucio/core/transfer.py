@@ -615,6 +615,7 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
     unavailable_write_rse_ids = __get_unavailable_rse_ids(operation='write', session=session)
 
     bring_online_local = bring_online
+    logging.info('EWV: Zeroing RSE INFO')
     transfers, rses_info, protocols, rse_attrs, reqs_no_source, reqs_only_tape_source, reqs_scheme_mismatch = {}, {}, {}, {}, [], [], []
     multi_hop_dict = {}
 
@@ -684,6 +685,7 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
             if hop['dest_rse_id'] not in rse_mapping:
                 rse_mapping[hop['dest_rse_id']] = get_rse_name(rse_id=hop['dest_rse_id'], session=session)
             if hop['dest_rse_id'] not in rses_info:
+                logging.info('EWV: Filling RSEs info for dest %s', hop['dest_rse_id'])
                 rses_info[hop['dest_rse_id']] = rsemgr.get_rse_info(rse=rse_mapping[hop['dest_rse_id']], session=session)
             if hop['dest_rse_id'] not in rse_attrs:
                 rse_attrs[hop['dest_rse_id']] = get_rse_attributes(hop['dest_rse_id'], session=session)
@@ -714,6 +716,7 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
 
             # Get the source rse information
             if source_rse_id not in rses_info:
+                logging.info('EWV: Filling RSEs info for source %s', source_rse_id)
                 rses_info[source_rse_id] = rsemgr.get_rse_info(rse=source_rse_name, session=session)
             if source_rse_id not in rse_attrs:
                 rse_attrs[source_rse_id] = get_rse_attributes(source_rse_id, session=session)
@@ -1019,6 +1022,8 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
                 # Compute the source URL. We don't need to fill the rse_mapping and rse_attrs for the intermediate RSEs cause it has already been done before
                 source_rse_id_key = 'read_%s_%s' % (source_rse_id, source_protocol)
                 if source_rse_id_key not in protocols:
+                    logging.info('EWV: About to crash')
+                    logging.info('EWV: RSEs %s', rses_info.keys())
                     protocols[source_rse_id_key] = rsemgr.create_protocol(rses_info[source_rse_id], 'third_party_copy', source_protocol)
                 if hop['dest_rse_id'] not in rse_attrs:
                     rse_attrs[dest_rse_id] = get_rse_attributes(hop['dest_rse_id'], session=session)
