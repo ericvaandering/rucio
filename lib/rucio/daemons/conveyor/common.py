@@ -389,7 +389,7 @@ def bulk_group_transfer(transfers, policy='rule', group_bulk=200, source_strateg
                     policy_key = "_".join(policy_key.split(' '))
                     # maybe here we need to hash the key if it's too long
 
-            if USER_TRANSFERS not in ['cms'] or activity not in USER_ACTIVITY:
+            if True: # USER_TRANSFERS not in ['cms'] or activity not in USER_ACTIVITY:
                 if policy_key not in grouped_transfers[external_host][job_key]:
                     grouped_transfers[external_host][job_key][policy_key] = {'files': [t_file], 'job_params': job_params}
                 else:
