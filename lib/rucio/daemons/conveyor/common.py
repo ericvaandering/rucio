@@ -303,6 +303,7 @@ def bulk_group_transfer(transfers, policy='rule', group_bulk=200, source_strateg
                 set_checksum_value(t_file, dest_supported_checksums)
 
         multihop = transfer.get('multihop', False)
+        logging.info('EWV: Transfer %s ' % transfer)
         strict_copy = transfer.get('strict_copy', False)
 
         external_host = transfer['external_host']
@@ -343,7 +344,7 @@ def bulk_group_transfer(transfers, policy='rule', group_bulk=200, source_strateg
                 job_params['max_time_in_queue'] = max_time_in_queue[transfer['file_metadata']['activity']]
             elif 'default' in max_time_in_queue:
                 job_params['max_time_in_queue'] = max_time_in_queue['default']
-
+        logging.info('EWV: Params %s' % job_params)
         # for multiple source replicas, no bulk submission
         if len(transfer['sources']) > 1:
             job_params['job_metadata']['multi_sources'] = True
@@ -388,7 +389,7 @@ def bulk_group_transfer(transfers, policy='rule', group_bulk=200, source_strateg
                     policy_key = '%s %s %s' % (activity, t_file['metadata']['src_rse'], t_file['metadata']['dst_rse'])
                     policy_key = "_".join(policy_key.split(' '))
                     # maybe here we need to hash the key if it's too long
-
+            logging.info('EWV: UT %s , activity %s, UA %s' % (USER_TRANSFERS, activity, USER_ACTIVITY))
             if True: # USER_TRANSFERS not in ['cms'] or activity not in USER_ACTIVITY:
                 if policy_key not in grouped_transfers[external_host][job_key]:
                     grouped_transfers[external_host][job_key][policy_key] = {'files': [t_file], 'job_params': job_params}
