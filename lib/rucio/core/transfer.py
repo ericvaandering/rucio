@@ -1025,6 +1025,8 @@ def get_transfer_requests_and_source_replicas(total_workers=0, worker_number=0, 
                 # hop = {'source_rse_id': source_rse_id, 'source_scheme': 'srm', 'source_scheme_priority': N, 'dest_rse_id': dest_rse_id, 'dest_scheme': 'srm', 'dest_scheme_priority': N}
                 source_protocol = hop['source_scheme']
                 source_rse_id = hop['source_rse_id']
+                if source_rse_id not in rses_info:
+                    rses_info[source_rse_id] = rsemgr.get_rse_info(rse=source_rse_name, session=session)
                 dest_rse_id = hop['dest_rse_id']
                 source_rse_name = rse_mapping[source_rse_id]
                 dest_rse_name = rse_mapping[dest_rse_id]
