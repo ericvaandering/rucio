@@ -85,6 +85,8 @@ def __to_js(var, value):
 def get_token():
     account = ctx.env.get('HTTP_X_RUCIO_ACCOUNT')
     dn = ctx.env.get('SSL_CLIENT_S_DN')
+    if not dn.startswith('/'):
+        dn = '/%s' % '/'.join(dn.split(',')[::-1])
     try:
         token = authentication.get_auth_token_x509(account,
                                                    dn,
