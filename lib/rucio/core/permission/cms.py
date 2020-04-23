@@ -187,7 +187,7 @@ def perm_add_rule(issuer, kwargs):
     # Is the account clear?
     account_ok = False
     for prefix in CAN_ADD_ANY_RULE:
-        if kwargs['account'].startswith(prefix):
+        if str(kwargs['account']).startswith(prefix):
             account_ok = True
 
     # Is the data tier clear
@@ -204,7 +204,6 @@ def perm_add_rule(issuer, kwargs):
     if not rses_ok and not account_ok and not tier_ok:
         return False
         # Otherwise continue on with default checking
-
 
     if kwargs['account'] == issuer and not kwargs['locked']:
         return True
