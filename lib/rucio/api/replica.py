@@ -210,7 +210,9 @@ def add_replicas(rse, files, issuer, ignore_availability=False):
 
     :returns: True is successful, False otherwise
     """
-    validate_schema(name='dids', obj=files)
+    for v_file in files:
+        v_file.update({"type": "FILE"})  # Make sure DIDs are identified as files for checking
+    validate_schema(name='dids', obj=v_files)
 
     rse_id = get_rse_id(rse=rse)
 
