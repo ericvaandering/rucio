@@ -230,6 +230,18 @@ COLLECTIONS = {"description": "Array of datasets or containers",
                "items": COLLECTION,
                "minItems": 1,
                "maxItems": 1000}
+"""
+  No else if in JSON Schema
+  if type == container
+       must match CMS dataset/container guidelines
+  else if type == dataset
+       must match CMS block guidelines
+  else if type == file
+       must match CMS LFN guidelines
+       CMS scope must not be in /store/user
+       user.jdoe scope must be in /store/user/rucio
+          (making sure it's in /store/user/rucio/jdoe seems to be impossible in JSON Schema, handled outside)
+ """
 
 DID = {"description": "Data Identifier(DID)",
        "type": "object",
@@ -244,19 +256,7 @@ DID = {"description": "Data Identifier(DID)",
                       "state": REPLICA_STATE,
                       "pfn": PFN},
 
-       """
-       No else if in JSON Schema
-       if type == container
-            must match CMS dataset/container guidelines
-       else if type == dataset
-            must match CMS block guidelines
-       else if type == file
-            must match CMS LFN guidelines
-            CMS scope must not be in /store/user
-            user.jdoe scope must be in /store/user/rucio
-               (making sure it's in /store/user/rucio/jdoe seems to be impossible in JSON Schema, handled outside)
-       """
-       
+
        "allOf": [
            {"if": {"properties": {"type": {"const": "CONTAINER"}}},
             "then": {"properties": {"name": {"pattern": CMS_DATASET}}}},
@@ -264,13 +264,6 @@ DID = {"description": "Data Identifier(DID)",
             "then": {"properties": {"name": {"pattern": CMS_BLOCK}}}},
            {"if": {"properties": {"type": {"const": "FILE"}}},
             "then": {"properties": {"name": {"pattern": CMS_LFN}}}},
-           {"if": {"allOf": [
-               {"properties": {"scope": {"pattern": "^user\\."}}},
-               {"properties": {"type": {"const": "FILE"}}},
-           ], },
-               "then": {"properties": {"name": {"pattern": "^/store/user/rucio/"}}}},
-           {"if": {"properties": {"scope": {"const": "cms"}}},
-            "then": {"not": {"properties": {"name": {"pattern": "^/store/user/"}}}}},
        ],
        "required": ["scope", "name", "type"],
        "additionalProperties": False}
@@ -280,6 +273,19 @@ DID_FILTERS = {"description": "Filters dictionary to list DIDs",
                "properties": {"created_before": DATE,
                               "created_afted": DATE},
                "additionalProperties": True}
+
+"""
+No else if in JSON Schema
+if type == container
+     must match CMS dataset/container guidelines
+else if type == dataset
+     must match CMS block guidelines
+else if type == file
+     must match CMS LFN guidelines
+     CMS scope must not be in /store/user
+     user.jdoe scope must be in /store/user/rucio
+        (making sure it's in /store/user/rucio/jdoe seems to be impossible in JSON Schema, handled outside)
+"""
 
 R_DID = {"description": "Data Identifier(DID)",
          "type": "object",
@@ -293,19 +299,6 @@ R_DID = {"description": "Data Identifier(DID)",
                         "md5": MD5,
                         "state": REPLICA_STATE,
                         "pfn": PFN},
-         """
-         No else if in JSON Schema
-         if type == container
-              must match CMS dataset/container guidelines
-         else if type == dataset
-              must match CMS block guidelines
-         else if type == file
-              must match CMS LFN guidelines
-              CMS scope must not be in /store/user
-              user.jdoe scope must be in /store/user/rucio
-                 (making sure it's in /store/user/rucio/jdoe seems to be impossible in JSON Schema, handled outside)
-         """
-
          "allOf": [
              {"if": {"properties": {"type": {"const": "CONTAINER"}}},
               "then": {"properties": {"name": {"pattern": CMS_DATASET}}}},
@@ -472,10 +465,6 @@ def validate_schema(name, obj):
     :param obj: The object to validate.
     """
 
-    if name.lower() in ['did', 'dids', 'r_did', 'r_dids']:
-        if obj:
-            raise InvalidObject("Problem validating %(name)s : %(obj)s" % locals())
-
     try:
         if obj:
             validate(obj, SCHEMAS.get(name, {}))
@@ -494,7 +483,6 @@ def validate_did(obj):
     Most of the checking is don with JSON schema, but this check
     makes sure user LFNs are in the correct /store/user/rucio/USERNAME namespace
     """
-    raise InvalidObject("Problem validating %s" % obj)
     lfn = obj['name']
     did_type = obj['type']
     scope = obj['scope']
@@ -502,3 +490,6 @@ def validate_did(obj):
         _, user = scope.split('.', 1)
         if not lfn.startswith('/store/user/rucio/%s/' % user):
             raise InvalidObject("Problem with LFN %(lfn)s : Not allowed for user %(user)s" % locals())
+    elif scope == 'cms' and did_type == 'FILE':
+        if lfn.startswith('/store/user/'):
+            raise InvalidObject("Problem with LFN %(lfn)s : Not allowed for scope cms" % locals())
