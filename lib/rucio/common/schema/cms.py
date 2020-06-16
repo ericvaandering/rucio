@@ -61,6 +61,7 @@ SCOPE = {"description": "Scope name",
 R_SCOPE = {"description": "Scope name",
            "type": "string",
            "pattern": "\\w"}
+R_SCOPE = SCOPE
 
 CMS_LFN_LENGTH = 500
 CMS_DATASET_CORE = r'/[a-zA-Z0-9\-_]{1,99}/[a-zA-Z0-9\.\-_]{1,199}/[A-Z\-]{1,50}'
@@ -292,7 +293,35 @@ R_DID = {"description": "Data Identifier(DID)",
                         "md5": MD5,
                         "state": REPLICA_STATE,
                         "pfn": PFN},
-         "required": ["scope", "name"],
+         """
+         No else if in JSON Schema
+         if type == container
+              must match CMS dataset/container guidelines
+         else if type == dataset
+              must match CMS block guidelines
+         else if type == file
+              must match CMS LFN guidelines
+              CMS scope must not be in /store/user
+              user.jdoe scope must be in /store/user/rucio
+                 (making sure it's in /store/user/rucio/jdoe seems to be impossible in JSON Schema, handled outside)
+         """
+
+         "allOf": [
+             {"if": {"properties": {"type": {"const": "CONTAINER"}}},
+              "then": {"properties": {"name": {"pattern": CMS_DATASET}}}},
+             {"if": {"properties": {"type": {"const": "DATASET"}}},
+              "then": {"properties": {"name": {"pattern": CMS_BLOCK}}}},
+             {"if": {"properties": {"type": {"const": "FILE"}}},
+              "then": {"properties": {"name": {"pattern": CMS_LFN}}}},
+             {"if": {"allOf": [
+                 {"properties": {"scope": {"pattern": "^user\\."}}},
+                 {"properties": {"type": {"const": "FILE"}}},
+             ], },
+                 "then": {"properties": {"name": {"pattern": "^/store/user/rucio/"}}}},
+             {"if": {"properties": {"scope": {"const": "cms"}}},
+              "then": {"not": {"properties": {"name": {"pattern": "^/store/user/"}}}}},
+         ],
+         "required": ["scope", "name", "type"],
          "additionalProperties": False}
 
 DIDS = {"description": "Array of Data Identifiers(DIDs)",
@@ -453,9 +482,11 @@ def validate_schema(name, obj):
     except ValidationError as error:  # NOQA, pylint: disable=W0612
         raise InvalidObject("Problem validating %(name)s : %(error)s" % locals())
 
-    if name.lower() == 'did':
+    if name.lower() in ['did', 'r_did']:
         validate_did(obj)
-
+    elif name.lower() in ['dids', 'r_dids']:
+        for did in obj:
+            validate_did(did)
 
 def validate_did(obj):
     """
