@@ -443,7 +443,8 @@ def validate_schema(name, obj):
     :param obj: The object to validate.
     """
 
-    raise InvalidObject("Problem validating %(name)s : %(obj)s" % locals())
+    if name.lower() in ['did', 'dids', 'r_did', 'r_dids']:
+        raise InvalidObject("Problem validating %(name)s : %(obj)s" % locals())
 
     try:
         if obj:
