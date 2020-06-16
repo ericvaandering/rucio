@@ -444,7 +444,8 @@ def validate_schema(name, obj):
     """
 
     if name.lower() in ['did', 'dids', 'r_did', 'r_dids']:
-        raise InvalidObject("Problem validating %(name)s : %(obj)s" % locals())
+        if obj:
+            raise InvalidObject("Problem validating %(name)s : %(obj)s" % locals())
 
     try:
         if obj:
