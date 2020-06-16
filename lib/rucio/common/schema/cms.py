@@ -442,6 +442,9 @@ def validate_schema(name, obj):
     :param name: The json schema name.
     :param obj: The object to validate.
     """
+
+    raise InvalidObject("Problem validating %(name)s : %(obj)s" % locals())
+
     try:
         if obj:
             validate(obj, SCHEMAS.get(name, {}))
