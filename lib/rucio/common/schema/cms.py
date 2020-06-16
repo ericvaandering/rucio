@@ -458,7 +458,7 @@ def validate_did(obj):
     Most of the checking is don with JSON schema, but this check
     makes sure user LFNs are in the correct /store/user/rucio/USERNAME namespace
     """
-
+    raise InvalidObject("Problem validating %s" % obj)
     lfn = obj['name']
     did_type = obj['type']
     scope = obj['scope']
