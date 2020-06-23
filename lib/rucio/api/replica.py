@@ -212,7 +212,7 @@ def add_replicas(rse, files, issuer, ignore_availability=False):
     """
     for v_file in files:
         v_file.update({"type": "FILE"})  # Make sure DIDs are identified as files for checking
-    validate_schema(name='dids', obj=v_files)
+    validate_schema(name='dids', obj=files)
 
     rse_id = get_rse_id(rse=rse)
 
@@ -266,6 +266,8 @@ def update_replicas_states(rse, files, issuer):
     :param files: The list of files.
     :param issuer: The issuer account.
     """
+    for v_file in files:
+        v_file.update({"type": "FILE"})  # Make sure DIDs are identified as files for checking
     validate_schema(name='dids', obj=files)
 
     rse_id = get_rse_id(rse=rse)
