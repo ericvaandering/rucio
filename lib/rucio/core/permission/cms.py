@@ -165,13 +165,13 @@ def perm_add_rule(issuer, kwargs):
     rses = parse_expression(kwargs['rse_expression'])
     # If all the RSEs matching the expression need approval, the rule cannot be created
     if not kwargs['ask_approval']:
-        all_rses_need_approval = True
+        # all_rses_need_approval = True
         for rse in rses:
             rse_attr = list_rse_attributes(rse_id=rse['id'])
             if rse_attr.get('requires_approval', False):
-                all_rses_need_approval = False
-        if not all_rses_need_approval:
-            return False
+                return False
+        # if not all_rses_need_approval:
+        #     return False
 
     # Early CMS can approve the rule if
     # Are all the RSEs OK?
