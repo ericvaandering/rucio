@@ -168,6 +168,9 @@ def perm_add_rule(issuer, kwargs):
     if _is_root(issuer) and kwargs['account'].startswith('sync_'):
         return True
 
+    if isinstance(repr(issuer), basestring) and repr(issuer).startswith('sync_'):
+        return True
+
     # If all the RSEs matching the expression need approval, the rule cannot be created
     if not kwargs['ask_approval']:
         all_rses_need_approval = True
