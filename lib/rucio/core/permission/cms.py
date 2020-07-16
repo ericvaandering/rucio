@@ -663,9 +663,7 @@ def perm_declare_bad_file_replicas(issuer, kwargs):
     :param kwargs: List of arguments for the action.
     :returns: True if account is allowed, otherwise False
     """
-    is_cloud_admin = bool(list(filter(lambda x: (x['key'].startswith('cloud-')) and (x['value'] == 'admin'),
-                                      list_account_attributes(account=issuer))))
-    return _is_root(issuer) or has_account_attribute(account=issuer, key='admin') or is_cloud_admin
+    return _is_root(issuer) or has_account_attribute(account=issuer, key='admin')
 
 
 def perm_declare_suspicious_file_replicas(issuer, kwargs):
@@ -1018,7 +1016,7 @@ def perm_add_bad_pfns(issuer, kwargs):
     :param kwargs: List of arguments for the action.
     :returns: True if account is allowed, otherwise False
     """
-    return _is_root(issuer)
+    return _is_root(issuer) or has_account_attribute(account=issuer, key='admin')
 
 
 def perm_remove_did_from_followed(issuer, kwargs):
