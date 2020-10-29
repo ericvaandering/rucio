@@ -28,8 +28,6 @@ from rucio.core.rse_expression_parser import parse_expression
 from rucio.core.rule import get_rule
 from rucio.db.sqla.constants import IdentityType
 
-CAN_ADD_ANY_RULE = ['sync_', 'wma_', 'wmcore_']
-MANAGED_DATATIERS = ['USER', 'NANOAOD', 'NANOAODSIM']
 
 def has_permission(issuer, action, kwargs):
     """
@@ -1053,6 +1051,7 @@ def perm_remove_dids_from_followed(issuer, kwargs):
     if not kwargs['account'] == issuer:
         return False
     return True
+
 
 def perm_add_vo(issuer, kwargs):
     """
