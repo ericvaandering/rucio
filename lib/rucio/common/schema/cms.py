@@ -294,7 +294,7 @@ DIDS = {"description": "Array of Data Identifiers(DIDs)",
         "type": "array",
         "items": DID,
         "minItems": 1,
-        "maxItems": 30000}  # Was 1000
+        "maxItems": 3000}  # Was 1000
 
 R_DIDS = {"description": "Array of Data Identifiers(DIDs)",
           "type": "array",
@@ -317,7 +317,7 @@ ATTACHMENTS = {"description": "Array of attachments",
                "type": "array",
                "items": ATTACHMENT,
                "minItems": 1,
-               "maxItems": 30000}  # Was 1000
+               "maxItems": 3000}  # Was 1000
 
 SUBSCRIPTION_FILTER = {"type": "object",
                        "properties": {"datatype": {"type": "array"},
