@@ -415,7 +415,7 @@ def add_bad_dids(dids, rse_id, reason, issuer, state=BadFilesStatus.BAD, session
     :param session: The database session in use.
     """
     unknown_replicas = []
-    replicas = []
+    replicas_for_update = []
 
     for did in dids:
         scope = InternalScope(did['scope'], vo=issuer.vo)
@@ -423,7 +423,7 @@ def add_bad_dids(dids, rse_id, reason, issuer, state=BadFilesStatus.BAD, session
         replica_exists, _scope, _name, already_declared, size = __exists_replicas(rse_id, scope, name, path=None,
                                                                                   session=session)
         if replica_exists and not already_declared:
-            replicas.append({'scope': scope, 'name': name, 'rse_id': rse_id, 'state': BadFilesStatus.BAD})
+            replicas_for_update.append({'scope': scope, 'name': name, 'rse_id': rse_id, 'state': ReplicaState.BAD})
             new_bad_replica = models.BadReplicas(scope=scope, name=name, rse_id=rse_id, reason=reason, state=state,
                                                  account=issuer, bytes=size)
             new_bad_replica.save(session=session, flush=False)
@@ -437,7 +437,7 @@ def add_bad_dids(dids, rse_id, reason, issuer, state=BadFilesStatus.BAD, session
 
     if str(state) == str(BadFilesStatus.BAD):
         try:
-            update_replicas_states(replicas, session=session)
+            update_replicas_states(replicas_for_update, session=session)
         except exception.UnsupportedOperation:
             raise exception.ReplicaNotFound("One or several replicas don't exist.")
 
