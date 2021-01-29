@@ -403,7 +403,7 @@ def __declare_bad_file_replicas(pfns, rse_id, reason, issuer, status=BadFilesSta
 
 
 @transactional_session
-def add_bad_dids(dids, rse_id, reason, issuer, state=ReplicaState.BAD, session=None):
+def add_bad_dids(dids, rse_id, reason, issuer, state=BadFilesStatus.BAD, session=None):
     """
     Declare a list of bad replicas.
 
@@ -411,7 +411,7 @@ def add_bad_dids(dids, rse_id, reason, issuer, state=ReplicaState.BAD, session=N
     :param rse_id: The RSE id.
     :param reason: The reason of the loss.
     :param issuer: The issuer account.
-    :param state: ReplicaState.BAD
+    :param state: BadFilesStatus.BAD
     :param session: The database session in use.
     """
     unknown_replicas = []
@@ -423,7 +423,7 @@ def add_bad_dids(dids, rse_id, reason, issuer, state=ReplicaState.BAD, session=N
         replica_exists, _scope, _name, already_declared, size = __exists_replicas(rse_id, scope, name, path=None,
                                                                                   session=session)
         if replica_exists and not already_declared:
-            replicas.append({'scope': scope, 'name': name, 'rse_id': rse_id, 'state': ReplicaState.BAD})
+            replicas.append({'scope': scope, 'name': name, 'rse_id': rse_id, 'state': BadFilesStatus.BAD})
             new_bad_replica = models.BadReplicas(scope=scope, name=name, rse_id=rse_id, reason=reason, state=state,
                                                  account=issuer, bytes=size)
             new_bad_replica.save(session=session, flush=False)
@@ -435,7 +435,7 @@ def add_bad_dids(dids, rse_id, reason, issuer, state=ReplicaState.BAD, session=N
             else:
                 unknown_replicas.append('%s:%s %s' % (did['scope'], name, 'Unknown replica'))
 
-    if str(state) == str(ReplicaState.BAD):
+    if str(state) == str(BadFilesStatus.BAD):
         try:
             update_replicas_states(replicas, session=session)
         except exception.UnsupportedOperation:
