@@ -33,6 +33,7 @@ from dogpile.cache.api import NoValue
 from hashlib import sha256
 from six import add_metaclass
 
+from rucio.common import schema
 from rucio.common.config import config_get
 from rucio.common.exception import InvalidRSEExpression, RSEBlacklisted
 from rucio.core.rse import list_rses, get_rses_with_attribute, get_rse_attribute
@@ -40,7 +41,7 @@ from rucio.db.sqla.session import transactional_session
 
 
 DEFAULT_RSE_ATTRIBUTE = "^T[0-3]_[A-Z]{2}((_[A-Za-z0-9]+)+)$"
-RSE_ATTRIBUTE = r'([A-Za-z0-9\._-]+[=<>][A-Za-z0-9_-]+)'
+RSE_ATTRIBUTE = schema.get_schema_value('RSE_ATTRIBUTE')['pattern']
 PRIMITIVE = r'(\(*(%s|%s|%s)\)*)' % (RSE_ATTRIBUTE, DEFAULT_RSE_ATTRIBUTE, r'\*')
 UNION = r'(\|%s)' % (PRIMITIVE)
 INTERSECTION = r'(\&%s)' % (PRIMITIVE)
