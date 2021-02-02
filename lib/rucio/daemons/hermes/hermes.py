@@ -127,7 +127,11 @@ def deliver_emails(once=False, send_email=True, thread=0, bulk=1000, delay=10):
 
                 msg['From'] = email_from
                 msg['To'] = ', '.join(message['payload']['to'])
-                msg['Subject'] = message['payload']['subject'].encode('utf-8')
+                if PY2:
+                    msg['Subject'] = message['payload']['subject'].encode('utf-8')
+                else:
+                    msg['Subject'] = message['payload']['subject']
+
                 test2 = msg.as_string()
 
                 if send_email:
