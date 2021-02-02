@@ -105,17 +105,30 @@ def deliver_emails(once=False, send_email=True, thread=0, bulk=1000, delay=10):
                 logging.debug('[email] %i:%i - submitting: %s', heartbeat['assign_thread'],
                               heartbeat['nr_threads'], str(message))
 
+                body = message['payload']['body']
+                logging.info('ewv: body is %s' % type(body))
+
                 if PY2:
-                    msg = MIMEText(message['payload']['body'].encode('utf-8'))
+                    msg = MIMEText(body.encode('utf-8'))
                 else:
-                    if isinstance(message['payload']['body'], bytes):
-                        msg = MIMEText(message['payload']['body'].decode('utf-8'))
+                    if isinstance(body, bytes):
+                        logging.info('ewv: body is %s' % type(body))
+
+                        new_body = body.decode('utf-8')
+                        logging.info('ewv: new_body is %s' % type(new_body))
+
+                        msg = MIMEText(new_body )
                     else:
-                        msg = MIMEText(message['payload']['body'])
+                        logging.info('ewv: body is %s' % type(body))
+
+                        msg = MIMEText(body)
+
+                test = msg.as_string()
 
                 msg['From'] = email_from
                 msg['To'] = ', '.join(message['payload']['to'])
                 msg['Subject'] = message['payload']['subject'].encode('utf-8')
+                test2 = msg.as_string()
 
                 if send_email:
                     smtp = smtplib.SMTP()
