@@ -1886,3 +1886,8 @@ CREATE TABLE VOS (
 );
 
 ALTER TABLE vos ADD CONSTRAINT "VOS_PK" PRIMARY KEY (vo);
+
+---
+
+--- The REQUESTS_HISTORY_PK index should be dropped if it exists (discussion with Martin, was causing issues)
+
