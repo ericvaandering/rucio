@@ -49,9 +49,9 @@ def rse_update(once=False):
     Main loop to check and update the RSE Counters.
     """
 
-    logging.info('rse_update: starting')
-
-    logging.info('rse_update: started')
+    logger = formatted_logger(logging.log, 'abacus-rse %s')
+    logger(logging.INFO, 'rse_update: starting')
+    logger(logging.INFO, 'rse_update: started')
 
     # Make an initial heartbeat so that all abacus-rse daemons have the correct worker number on the next try
     executable = 'abacus-rse'
@@ -64,7 +64,7 @@ def rse_update(once=False):
         try:
             # Heartbeat
             heartbeat = live(executable=executable, hostname=hostname, pid=pid, thread=current_thread)
-            prepend_str = 'reaper2[%i/%i] ' % (heartbeat['assign_thread'], heartbeat['nr_threads'])
+            prepend_str = 'abacus-rse[%i/%i] ' % (heartbeat['assign_thread'], heartbeat['nr_threads'])
             logger = formatted_logger(logging.log, prepend_str + '%s')
             logger(logging.INFO, 'Abacus-rse started')
 
@@ -76,8 +76,7 @@ def rse_update(once=False):
 
             # If the list is empty, sent the worker to sleep
             if not rse_ids and not once:
-                logger(logging.INFO, 'rse_update[%s/%s] did not get any work' %
-                       (heartbeat['assign_thread'], heartbeat['nr_threads'] - 1))
+                logger(logging.INFO, 'did not get any work')
                 time.sleep(10)
             else:
                 for rse_id in rse_ids:
@@ -85,20 +84,16 @@ def rse_update(once=False):
                         break
                     start_time = time.time()
                     update_rse_counter(rse_id=rse_id)
-                    logger(logging.DEBUG, 'rse_update[%s/%s]: counter update of rse "%s" took %f' %
-                           (heartbeat['assign_thread'], heartbeat['nr_threads'] - 1, rse_id,
-                            time.time() - start_time))
+                    logger(logging.DEBUG, 'counter update of rse "%s" took %f' % (rse_id, time.time() - start_time))
                     start_time = time.time()
                     update_replica_counts(rse_id=rse_id)
-                    logger(logging.DEBUG, 'rse_update[%s/%s]: replica update of rse "%s" took %f' %
-                           (heartbeat['assign_thread'], heartbeat['nr_threads'] - 1, rse_id,
-                            time.time() - start_time))
+                    logger(logging.DEBUG, 'replica update of rse "%s" took %f' % (rse_id, time.time() - start_time))
         except Exception:
             logger(logging.ERROR, traceback.format_exc())
         if once:
             break
 
-    logger(logging.INFO, 'rse_update: graceful stop requested')
+    logging.info(logging.INFO, 'rse_update: graceful stop requested')
     die(executable=executable, hostname=hostname, pid=pid, thread=current_thread)
     logger(logging.INFO, 'rse_update: graceful stop done')
 
