@@ -151,16 +151,12 @@ def update_replica_counts(rse_id, session=None):
     # Get the counds of obsolete and deletably (expired) files
     obsolete_files, obsolete_bytes = (session
                                       .query(func.count(), func.sum(models.RSEFileAssociation.bytes))
-                                      .with_hint(models.RSEFileAssociation,
-                                                 "INDEX_FFS(REPLICAS REPLICAS_TOMBSTONE_IDX)", 'oracle')
                                       .filter(models.RSEFileAssociation.rse_id == rse_id,
                                               models.RSEFileAssociation.tombstone != null(),
                                               models.RSEFileAssociation.tombstone == OBSOLETE)
                                       .one())
     deletable_files, deletable_bytes = (session
                                         .query(func.count(), func.sum(models.RSEFileAssociation.bytes))
-                                        .with_hint(models.RSEFileAssociation,
-                                                   "INDEX_FFS(REPLICAS REPLICAS_TOMBSTONE_IDX)", 'oracle')
                                         .filter(models.RSEFileAssociation.rse_id == rse_id,
                                                 models.RSEFileAssociation.tombstone != null(),
                                                 models.RSEFileAssociation.tombstone < datetime.datetime.now())
