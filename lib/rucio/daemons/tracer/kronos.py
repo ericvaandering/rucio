@@ -90,7 +90,7 @@ class AMQConsumer(object):
     def on_message(self, headers, message):
         record_counter('daemons.tracer.kronos.reports')
 
-        appversion = 'dq2'
+        appversion = 'yuyi'
         msg_id = headers['message-id']
         if 'appversion' in headers:
             appversion = headers['appversion']
