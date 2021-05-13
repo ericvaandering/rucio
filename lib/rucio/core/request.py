@@ -1678,6 +1678,9 @@ def get_transfertool_filter(
 
 
 def sort_requests_minimum_distance(items: "RowIterator") -> "RowIterator":
+    logger = logging.log
+    import pprint
+    logger(logging.INFO, pprint.pformat(items))
     items = [item for item in items if item[distance_col] is not None]
     yield from sorted(items, key=lambda t: t[distance_col])
 
