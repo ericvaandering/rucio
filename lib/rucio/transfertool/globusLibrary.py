@@ -36,6 +36,7 @@ for extra_module in EXTRA_MODULES:
 
 if EXTRA_MODULES['globus_sdk']:
     from globus_sdk import NativeAppAuthClient, RefreshTokenAuthorizer, TransferClient, TransferData, DeleteData  # pylint: disable=import-error
+    from globus_sdk.exc import TransferAPIError  # pylint: disable=import-error
     import yaml  # pylint: disable=import-error
 
 GLOBUS_AUTH_APP = config_get('conveyor', 'globus_auth_app', False, None)
@@ -158,9 +159,17 @@ def bulk_check_xfers(task_ids):
     responses = {}
 
     for task_id in task_ids:
-        transfer = tc.get_task(str(task_id))
-        logging.debug('transfer: %s' % transfer)
-        status = str(transfer["status"])
+        try:
+            transfer = tc.get_task(str(task_id))
+            logging.debug('transfer: %s' % transfer)
+            status = str(transfer["status"])
+        except TransferAPIError as e:
+            if e.code == 'ClientError.NotFound':
+                logging.warning('No Globus ID found for task_id %s. Marking failed' )
+                status = 'FAILED'
+            else:
+                raise
+            
         if status == 'SUCCEEDED':
             record_counter('daemons.conveyor.transfer_submitter.globus.transfers.bytes_transferred', transfer['bytes_transferred'])
             record_counter('daemons.conveyor.transfer_submitter.globus.transfers.effective_bytes_per_second', transfer['effective_bytes_per_second'])
