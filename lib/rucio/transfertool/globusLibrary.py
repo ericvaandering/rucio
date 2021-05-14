@@ -165,7 +165,7 @@ def bulk_check_xfers(task_ids):
             status = str(transfer["status"])
         except TransferAPIError as e:
             if e.code == 'ClientError.NotFound':
-                logging.warning('No Globus ID found for task_id %s. Marking failed' )
+                logging.warning('No Globus ID found for task_id %s. Marking failed', task_id)
                 status = 'FAILED'
             else:
                 raise
