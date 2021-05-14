@@ -293,6 +293,12 @@ def bulk_query_transfers(request_host, transfer_ids, transfertool='fts3', timeou
     record_counter('core.request.bulk_query_transfers')
 
     if transfertool == 'fts3':
+        if not request_host: # Something went really wrong, fail them all
+            logger(logging.ERROR, 'FTS transfer IDs have no external host: %s', transfer_ids)
+            fts_resps = {}
+            for transfer_id in transfer_ids:
+                fts_resps[transfer_id] = Exception("Transfer id %s is not returned" % transfer_id)
+            return fts_resps
         try:
             start_time = time.time()
             fts_resps = FTS3Transfertool(external_host=request_host).bulk_query(transfer_ids=transfer_ids, timeout=timeout)

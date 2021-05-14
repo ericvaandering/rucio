@@ -169,7 +169,7 @@ def bulk_check_xfers(task_ids):
                 status = 'FAILED'
             else:
                 raise
-            
+
         if status == 'SUCCEEDED':
             record_counter('daemons.conveyor.transfer_submitter.globus.transfers.bytes_transferred', transfer['bytes_transferred'])
             record_counter('daemons.conveyor.transfer_submitter.globus.transfers.effective_bytes_per_second', transfer['effective_bytes_per_second'])
