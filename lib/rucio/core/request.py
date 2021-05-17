@@ -1547,6 +1547,7 @@ def preparer_update_requests(source_iter: "Iterable[Sequence]", session: "Option
             update_dict[models.Request.source_rse_id] = req_source[source_rse_id_col]
 
         if len(req_source) > extra_transfertool_col:
+            print('Setting transfertool for request %s to %s' % (req_source[request_id_col], req_source[extra_transfertool_col]))
             update_dict[models.Request.transfertool] = req_source[extra_transfertool_col]
 
         session.query(models.Request).filter_by(id=req_source[request_id_col]).update(update_dict, synchronize_session=False)
