@@ -211,7 +211,10 @@ def submitter(once=False, rses=None, partition_wait_time=10,
                         # build bulk job file list per external host to send to submit_transfer
                         for external_host in grouped_jobs:
                             # pad the job with job_params; irrelevant for globus but needed for further rucio parsing
-                            submitjob = {'files': [], 'job_params': grouped_jobs[''][0].get('job_params')}
+                            try:
+                                submitjob = {'files': [], 'job_params': grouped_jobs[''][0].get('job_params')}
+                            except KeyError:
+                                logger(logging.ERROR, 'Encountered KeyError in GJ: %s' % grouped_jobs)
                             for job in grouped_jobs[external_host]:
                                 submitjob.get('files').append(job.get('files')[0])
                             logger(logging.DEBUG, 'submitjob: %s' % submitjob)
