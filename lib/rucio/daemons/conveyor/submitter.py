@@ -186,9 +186,12 @@ def submitter(once=False, rses=None, partition_wait_time=10,
 
                 # group transfers
                 logger(logging.INFO, 'Starting to group transfers for %s', activity)
+                logger(logging.DEBUG, 'Params to group transfers for %s %s %s %s %s',
+                       group_policy, group_bulk, source_strategy, max_time_in_queue, user_transfer)
                 start_time = time.time()
 
                 grouped_jobs = bulk_group_transfer(transfers, group_policy, group_bulk, source_strategy, max_time_in_queue, group_by_scope=user_transfer)
+                logger(logging.DEBUG, 'Number of jobs in group: %s', len(grouped_jobs))
                 record_timer('daemons.conveyor.transfer_submitter.bulk_group_transfer', (time.time() - start_time) * 1000 / (len(transfers) if transfers else 1))
 
                 logger(logging.INFO, 'Starting to submit transfers for %s', activity)
@@ -209,13 +212,11 @@ def submitter(once=False, rses=None, partition_wait_time=10,
                 elif transfertool == 'globus':
                     if transfertype == 'bulk':
                         # build bulk job file list per external host to send to submit_transfer
+                        logger(logging.DEBUG, 'attempting a bulk submit for globus')
                         for external_host in grouped_jobs:
+                            logger(logging.DEBUG, 'external host is %s with %s jobs', external_host, len(grouped_jobs[external_host]))
                             # pad the job with job_params; irrelevant for globus but needed for further rucio parsing
                             submitjob = {'files': [], 'job_params': grouped_jobs[''][0].get('job_params')}
-                            # try:
-                            #     submitjob = {'files': [], 'job_params': grouped_jobs[''][0].get('job_params')}
-                            # except KeyError:
-                            #     logger(logging.ERROR, 'Encountered KeyError in GJ: %s' % grouped_jobs)
                             for job in grouped_jobs[external_host]:
                                 submitjob.get('files').append(job.get('files')[0])
                             logger(logging.DEBUG, 'submitjob: %s' % submitjob)
