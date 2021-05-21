@@ -218,6 +218,7 @@ def submitter(once=False, rses=None, partition_wait_time=10,
                             # pad the job with job_params; irrelevant for globus but needed for further rucio parsing
                             submitjob = {'files': [], 'job_params': grouped_jobs[''][0].get('job_params')}
                             for job in grouped_jobs[external_host]:
+                                logger(logging.DEBUG, 'EWV job is %s', job)
                                 logger(logging.DEBUG, 'EWV about to submit for %s', job.get('files')[0])
                                 submitjob.get('files').append(job.get('files')[0])
                             logger(logging.DEBUG, 'submitjob: %s' % submitjob)
