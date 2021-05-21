@@ -447,6 +447,9 @@ def bulk_group_transfer(transfers, policy='rule', group_bulk=200, source_strateg
 
         for external_host in grouped_jobs:
             grouped_jobs[external_host] = grouped_jobs[external_host][_catch_all_scopes_str]
+            logger(logging.DEBUG, 'Files for host %s is %s', external_host, len(grouped_jobs[external_host]))
+
+    logger(logging.DEBUG, 'N external hosts %s', len(grouped_jobs))
 
     return grouped_jobs
 
