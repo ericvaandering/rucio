@@ -438,7 +438,7 @@ def bulk_group_transfer(transfers, policy='rule', group_bulk=200, source_strateg
                     job_params = grouped_transfers[external_host][scope_key][job_key][policy_key]['job_params']
                     for xfers_files in chunks(grouped_transfers[external_host][scope_key][job_key][policy_key]['files'], group_bulk):
                         # for the last small piece, just submit it.
-                        logger(logging.DEBUG, 'Loop xfers_files %s', xfers_files)
+                        logger(logging.DEBUG, 'Loop xfers_files length %s', len(xfers_files))
 
                         grouped_jobs[external_host][scope_key].append({'files': xfers_files, 'job_params': job_params})
 
@@ -450,7 +450,7 @@ def bulk_group_transfer(transfers, policy='rule', group_bulk=200, source_strateg
             logger(logging.DEBUG, 'Files for host %s is %s', external_host, len(grouped_jobs[external_host]))
 
     logger(logging.DEBUG, 'N external hosts %s', len(grouped_jobs))
-
+    logger(logging.DEBUG, "Grouped jobs %s", grouped_jobs)
     return grouped_jobs
 
 
