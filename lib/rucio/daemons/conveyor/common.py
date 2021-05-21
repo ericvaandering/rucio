@@ -260,6 +260,8 @@ def bulk_group_transfer(transfers, policy='rule', group_bulk=200, source_strateg
         logger(logging.WARNING, 'activity_source_strategy not properly defined')
         activity_source_strategy = {}
 
+    logger(logging.DEBUG, 'ass %s dss %s #of xfers %s gb %s', default_source_strategy, activity_source_strategy, len(transfers), group_bulk)
+
     for request_id in transfers:
         transfer = transfers[request_id]
         verify_checksum = transfer['file_metadata'].get('verify_checksum', 'both')
@@ -363,6 +365,7 @@ def bulk_group_transfer(transfers, policy='rule', group_bulk=200, source_strateg
 
         # for multiple source replicas, no bulk submission
         if len(transfer['sources']) > 1:
+            logger(logging.DEBUG, 'Multiple sources detected for %s', t_file['destinations'])
             job_params['job_metadata']['multi_sources'] = True
             current_jobs_group.append({'files': [t_file], 'job_params': job_params})
         else:
@@ -377,9 +380,11 @@ def bulk_group_transfer(transfers, policy='rule', group_bulk=200, source_strateg
 
             if multihop:
                 job_key = 'multihop_%s' % (transfer['initial_request_id'])
+            logger(logging.DEBUG, 'Job key is  %s', job_key)
 
             if job_key not in current_transfers_group:
                 current_transfers_group[job_key] = {}
+                logger(logging.DEBUG, 'Making new transfers group')
 
             if multihop:
                 policy_key = 'multihop_%s' % (transfer['initial_request_id'])
@@ -399,9 +404,12 @@ def bulk_group_transfer(transfers, policy='rule', group_bulk=200, source_strateg
                     policy_key = '%s %s %s' % (activity, t_file['metadata']['src_rse'], t_file['metadata']['dst_rse'])
                     policy_key = "_".join(policy_key.split(' '))
                     # maybe here we need to hash the key if it's too long
+            logger(logging.DEBUG, 'Policy key is  %s', policy_key)
 
             if policy_key not in current_transfers_group[job_key]:
                 current_transfers_group[job_key][policy_key] = {'files': [], 'job_params': job_params}
+                logger(logging.DEBUG, 'Making new current transfers group')
+
             current_transfers_policy = current_transfers_group[job_key][policy_key]
             if multihop:
                 # The parent transfer should be the first of the list
@@ -415,16 +423,28 @@ def bulk_group_transfer(transfers, policy='rule', group_bulk=200, source_strateg
 
     # for jobs with different job_key, we cannot put in one job.
     for external_host in grouped_transfers:
+        logger(logging.DEBUG, 'Loop external_host %s', external_host)
+
         for scope_key in grouped_transfers[external_host]:
+            logger(logging.DEBUG, 'Loop scope_key %s', scope_key)
+
             for job_key in grouped_transfers[external_host][scope_key]:
+                logger(logging.DEBUG, 'Loop job_key %s', job_key)
+
                 # for all policy groups in job_key, the job_params is the same.
                 for policy_key in grouped_transfers[external_host][scope_key][job_key]:
+                    logger(logging.DEBUG, 'Loop policy_key %s', policy_key)
+
                     job_params = grouped_transfers[external_host][scope_key][job_key][policy_key]['job_params']
                     for xfers_files in chunks(grouped_transfers[external_host][scope_key][job_key][policy_key]['files'], group_bulk):
                         # for the last small piece, just submit it.
+                        logger(logging.DEBUG, 'Loop xfers_files %s', xfers_files)
+
                         grouped_jobs[external_host][scope_key].append({'files': xfers_files, 'job_params': job_params})
 
     if not group_by_scope:
+        logger(logging.DEBUG, 'Not group by scope')
+
         for external_host in grouped_jobs:
             grouped_jobs[external_host] = grouped_jobs[external_host][_catch_all_scopes_str]
 

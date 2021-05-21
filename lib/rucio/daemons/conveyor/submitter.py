@@ -191,7 +191,7 @@ def submitter(once=False, rses=None, partition_wait_time=10,
                 start_time = time.time()
 
                 grouped_jobs = bulk_group_transfer(transfers, group_policy, group_bulk, source_strategy, max_time_in_queue, group_by_scope=user_transfer)
-                logger(logging.DEBUG, 'Number of jobs in group: %s', len(grouped_jobs))
+                logger(logging.DEBUG, 'Number of job groups: %s', len(grouped_jobs))
                 record_timer('daemons.conveyor.transfer_submitter.bulk_group_transfer', (time.time() - start_time) * 1000 / (len(transfers) if transfers else 1))
 
                 logger(logging.INFO, 'Starting to submit transfers for %s', activity)
