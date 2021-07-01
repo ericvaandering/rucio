@@ -15,6 +15,7 @@
 # - Andrew Lister <andrew.lister@stfc.ac.uk>, 2019
 # - Luc Goossens <luc.goossens@cern.ch>, 2020
 # - Thomas Beermann <thomas.beermann@cern.ch>, 2021
+# - Nick Smith <nick.smith@cern.ch>, 2021
 #
 # PY3K COMPATIBLE
 
@@ -570,7 +571,7 @@ def __repair_stuck_locks_with_none_grouping(datasetfiles, locks, replicas, sourc
                 if source_rses:
                     associated_replica = [replica for replica in replicas[(file['scope'], file['name'])] if replica.rse_id == lock.rse_id][0]
                     # Check if there is an eglible source replica for this lock
-                    if set(source_replicas.get((file['scope'], file['name']), [])).intersection(source_rses) and selector_rse_dict.get(lock.rse_id, {}).get('availability_write', True):
+                    if set(source_replicas.get((file['scope'], file['name']), [])).intersection(source_rses) and (selector_rse_dict.get(lock.rse_id, {}).get('availability_write', True) or rule.ignore_availability):
                         __update_lock_replica_and_create_transfer(lock=lock,
                                                                   replica=associated_replica,
                                                                   rule=rule,
@@ -610,7 +611,7 @@ def __repair_stuck_locks_with_none_grouping(datasetfiles, locks, replicas, sourc
                                 locks_to_delete[lock.rse_id] = [lock]
                     except InsufficientTargetRSEs:
                         # Just retry the already existing lock
-                        if __is_retry_required(lock=lock, activity=rule.activity) and selector_rse_dict.get(lock.rse_id, {}).get('availability_write', True):
+                        if __is_retry_required(lock=lock, activity=rule.activity) and (selector_rse_dict.get(lock.rse_id, {}).get('availability_write', True) or rule.ignore_availability):
                             associated_replica = [replica for replica in replicas[(file['scope'], file['name'])] if replica.rse_id == lock.rse_id][0]
                             __update_lock_replica_and_create_transfer(lock=lock,
                                                                       replica=associated_replica,
@@ -677,7 +678,7 @@ def __repair_stuck_locks_with_all_grouping(datasetfiles, locks, replicas, source
                 if source_rses:
                     associated_replica = [replica for replica in replicas[(file['scope'], file['name'])] if replica.rse_id == lock.rse_id][0]
                     # Check if there is an eglible source replica for this lock
-                    if set(source_replicas.get((file['scope'], file['name']), [])).intersection(source_rses) and selector_rse_dict.get(lock.rse_id, {}).get('availability_write', True):
+                    if set(source_replicas.get((file['scope'], file['name']), [])).intersection(source_rses) and (selector_rse_dict.get(lock.rse_id, {}).get('availability_write', True) or rule.ignore_availability):
                         __update_lock_replica_and_create_transfer(lock=lock,
                                                                   replica=associated_replica,
                                                                   rule=rule,
@@ -686,7 +687,7 @@ def __repair_stuck_locks_with_all_grouping(datasetfiles, locks, replicas, source
                                                                   session=session)
                 else:
                     # Just retry the already existing lock
-                    if __is_retry_required(lock=lock, activity=rule.activity) and selector_rse_dict.get(lock.rse_id, {}).get('availability_write', True):
+                    if __is_retry_required(lock=lock, activity=rule.activity) and (selector_rse_dict.get(lock.rse_id, {}).get('availability_write', True) or rule.ignore_availability):
                         associated_replica = [replica for replica in replicas[(file['scope'], file['name'])] if replica.rse_id == lock.rse_id][0]
                         __update_lock_replica_and_create_transfer(lock=lock,
                                                                   replica=associated_replica,
@@ -753,7 +754,7 @@ def __repair_stuck_locks_with_dataset_grouping(datasetfiles, locks, replicas, so
                 if source_rses:
                     associated_replica = [replica for replica in replicas[(file['scope'], file['name'])] if replica.rse_id == lock.rse_id][0]
                     # Check if there is an eglible source replica for this lock
-                    if set(source_replicas.get((file['scope'], file['name']), [])).intersection(source_rses) and selector_rse_dict.get(lock.rse_id, {}).get('availability_write', True):
+                    if set(source_replicas.get((file['scope'], file['name']), [])).intersection(source_rses) and (selector_rse_dict.get(lock.rse_id, {}).get('availability_write', True) or rule.ignore_availability):
                         __update_lock_replica_and_create_transfer(lock=lock,
                                                                   replica=associated_replica,
                                                                   rule=rule,
@@ -762,7 +763,7 @@ def __repair_stuck_locks_with_dataset_grouping(datasetfiles, locks, replicas, so
                                                                   session=session)
                 else:
                     # Just retry the already existing lock
-                    if __is_retry_required(lock=lock, activity=rule.activity) and selector_rse_dict.get(lock.rse_id, {}).get('availability_write', True):
+                    if __is_retry_required(lock=lock, activity=rule.activity) and (selector_rse_dict.get(lock.rse_id, {}).get('availability_write', True) or rule.ignore_availability):
                         associated_replica = [replica for replica in replicas[(file['scope'], file['name'])] if replica.rse_id == lock.rse_id][0]
                         __update_lock_replica_and_create_transfer(lock=lock,
                                                                   replica=associated_replica,
