@@ -207,7 +207,7 @@ def deliver_messages(once=False, brokers_resolved=None, thread=0, bulk=1000, del
                                      keepalive=True,
                                      )
         else:
-            logging.info('[broker] setting up ssl cert/key authentication: %s' % broker)
+            logging.info('[broker] setting up ssl cert/key authentication: %s with timeout %s', broker, broker_timeout)
             con = stomp.Connection12(host_and_ports=[(broker, port)],
                                      use_ssl=True,
                                      ssl_key_file=config_get('messaging-hermes', 'ssl_key_file'),
