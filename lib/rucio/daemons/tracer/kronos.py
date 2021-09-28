@@ -324,19 +324,19 @@ def __get_broker_conns(brokers, port, use_ssl, vhost, reconnect_attempts, ssl_ke
     conns = []
     for broker in brokers_resolved:
         if not use_ssl:
+            logging.info('[broker] setting up user/password authentication: %s' % broker)
             conns.append(Connection(host_and_ports=[(broker, port)],
                                     use_ssl=False,
                                     vhost=vhost,
-                                    timeout=timeout,
                                     heartbeats=(0, 1000),
                                     reconnect_attempts_max=reconnect_attempts))
         else:
+            logging.info('[broker] setting up ssl cert/key authentication: %s' % broker)
             conns.append(Connection(host_and_ports=[(broker, port)],
                                     use_ssl=True,
                                     ssl_key_file=ssl_key_file,
                                     ssl_cert_file=ssl_cert_file,
                                     vhost=vhost,
-                                    timeout=timeout,
                                     heartbeats=(0, 1000),
                                     reconnect_attempts_max=reconnect_attempts))
     return conns
