@@ -388,6 +388,15 @@ def kronos_file(thread=0, dataset_queue=None, sleep_time=60):
     reconnect_attempts = config_get_int('tracer-kronos', 'reconnect_attempts')
     ssl_key_file = config_get('tracer-kronos', 'ssl_key_file', raise_exception=False)
     ssl_cert_file = config_get('tracer-kronos', 'ssl_cert_file', raise_exception=False)
+    conns = __get_broker_conns(brokers=brokers_alias,
+                               port=port,
+                               use_ssl=use_ssl,
+                               vhost=vhost,
+                               reconnect_attempts=reconnect_attempts,
+                               ssl_key_file=ssl_key_file,
+                               ssl_cert_file=ssl_cert_file,
+                               timeout=sleep_time,
+                               )
 
     sanity_check(executable=executable, hostname=hostname)
     while not graceful_stop.is_set():
@@ -395,15 +404,6 @@ def kronos_file(thread=0, dataset_queue=None, sleep_time=60):
         heart_beat = live(executable, hostname, pid, hb_thread)
         prepend_str = 'kronos-file[%i/%i] ' % (heart_beat['assign_thread'], heart_beat['nr_threads'])
         logger = formatted_logger(logging.log, prepend_str + '%s')
-        conns = __get_broker_conns(brokers=brokers_alias,
-                                   port=port,
-                                   use_ssl=use_ssl,
-                                   vhost=vhost,
-                                   reconnect_attempts=reconnect_attempts,
-                                   ssl_key_file=ssl_key_file,
-                                   ssl_cert_file=ssl_cert_file,
-                                   timeout=sleep_time,
-                                   logger=logger)
         for conn in conns:
             if not conn.is_connected():
                 logger(logging.INFO, 'connecting to %s' % str(conn.transport._Transport__host_and_ports[0]))
