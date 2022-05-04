@@ -619,13 +619,13 @@ class x509(ErrorHandlingMethodView):
         vo = extract_vo(request.headers)
         account = request.headers.get('X-Rucio-Account', default=None)
         dn = request.environ.get('SSL_CLIENT_S_DN')
-        logging.error(f'EWV DN is {dn}')
         if not dn:
             return generate_http_error_flask(401, CannotAuthenticate.__name__, 'Cannot get DN', headers=headers)
         if not dn.startswith('/'):
-            logging.error(f'EWV DN 2 is {dn}')
+            # Real commas are escaped and should not be split on
+            dn = dn.replace('\,', '#REALCOMMA#')
             dn = '/' + '/'.join(dn.split(',')[::-1])
-            logging.error(f'EWV DN 3 is {dn}')
+            dn = dn.replace('#REALCOMMA#', ',')
 
         appid = request.headers.get('X-Rucio-AppID', default='unknown')
         ip = request.headers.get('X-Forwarded-For', default=request.remote_addr)
