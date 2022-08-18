@@ -66,6 +66,18 @@ BULK_QUERY_COUNTER = MultiCounter(prom='rucio_transfertool_fts3_bulk_query', sta
                                   documentation='Number of bulk queries', labelnames=('state', 'host'))
 QUERY_DETAILS_COUNTER = MultiCounter(prom='rucio_transfertool_fts3_query_details', statsd='transfertool.fts3.{host}.query_details.{state}',
                                      documentation='Number of detailed status queries', labelnames=('state', 'host'))
+OVERWRITE_CHECK_COUNTER = MultiCounter(prom='rucio_transfertool_fts3_overwrite_check',
+                                       statsd='transfertool.fts3.overwrite.check',
+                                       documentation='Number of times checked if existing file matches',
+                                       labelnames=('rse', 'rsetype', 'reason'))
+OVERWRITE_OK_COUNTER = MultiCounter(prom='rucio_transfertool_fts3_overwrite_ok',
+                                    statsd='transfertool.fts3.overwrite.ok',
+                                    documentation='Number of times existing file matches',
+                                    labelnames=('rse', 'rsetype', 'reason'))
+OVERWRITE_FAIL_COUNTER = MultiCounter(prom='rucio_transfertool_fts3_overwrite_fail',
+                                      statsd='transfertool.fts3.overwrite.fail',
+                                      documentation='Number of times existing file does not match',
+                                      labelnames=('rse', 'rsetype', 'reason'))
 
 
 ALLOW_USER_OIDC_TOKENS = config_get_bool('conveyor', 'allow_user_oidc_tokens', False, False)
@@ -446,7 +458,7 @@ class Fts3TransferStatusReport(TransferStatusReport):
         return False
 
     @classmethod
-    def _is_recoverable_fts_overwrite_error(cls, request, reason, file_metadata):
+    def _is_recoverable_fts_overwrite_error(cls, request, reason, file_metadata, logger=logging.log):
         """
         Verify the special case when FTS cannot copy a file because destination exists and overwrite is disabled,
         but the destination file is actually correct.
@@ -460,12 +472,15 @@ class Fts3TransferStatusReport(TransferStatusReport):
             return False
         dst_file = file_metadata.get('dst_file', {})
         dst_type = file_metadata.get('dst_type', None)
+        OVERWRITE_CHECK_COUNTER.labels(rse=file_metadata["dst_rse"], rsetype=dst_type, reason=reason).inc()
+
         if 'Destination file exists and overwrite is not enabled' in (reason or ''):
             if cls._dst_file_set_and_file_correct(request, dst_file):
-                if dst_file.get('file_on_tape'):
+                if dst_type == 'DISK' or dst_file.get('file_on_tape'):
+                    OVERWRITE_OK_COUNTER.labels(rse=file_metadata["dst_rse"], rsetype=dst_type, reason=reason).inc()
                     return True
-                elif dst_type == 'DISK':
-                    return True
+
+        OVERWRITE_FAIL_COUNTER.labels(rse=file_metadata["dst_rse"], rsetype=dst_type, reason=reason).inc()
         return False
 
 
@@ -555,9 +570,11 @@ class FTS3ApiTransferStatusReport(Fts3TransferStatusReport):
         self._multi_sources = str(job_response['job_metadata'].get('multi_sources', '')).lower() == str('true')
         self._src_url = file_response.get('source_surl', None)
         self._dst_url = file_response.get('dest_surl', None)
+        self.logger = logging.log
 
     def initialize(self, session, logger=logging.log):
 
+        self.logger = logger
         job_response = self.job_response
         file_response = self.file_response
         request_id = self.request_id
@@ -575,9 +592,18 @@ class FTS3ApiTransferStatusReport(Fts3TransferStatusReport):
                 new_state = RequestState.DONE
             elif file_state == FTS_STATE.FAILED and job_state == FTS_STATE.FAILED or \
                     file_state == FTS_STATE.FAILED and not self._multi_sources:  # for multi-source transfers we must wait for the job to be in a final state
-                if self._is_recoverable_fts_overwrite_error(self.request(session), reason, self._file_metadata):
+                if self._is_recoverable_fts_overwrite_error(self.request(session), reason, self._file_metadata,
+                                                            logger=self.logger):
+                    file_meta = self._file_metadata
+                    self.logger(logging.DEBUG,
+                                f'Recovered existing file: {request_id} to {file_meta["dst_rse"]} '
+                                f'({self.external_host} {self._transfer_id})')
                     new_state = RequestState.DONE
                 else:
+                    file_meta = self._file_metadata
+                    self.logger(logging.INFO,
+                                f'Unrecoverable: {request_id} to {file_meta["dst_rse"]} '
+                                f'declared FAILED ({self.external_host} {self._transfer_id})')
                     new_state = RequestState.FAILED
             elif job_state_is_final and file_state == FTS_STATE.CANCELED:
                 new_state = RequestState.FAILED
