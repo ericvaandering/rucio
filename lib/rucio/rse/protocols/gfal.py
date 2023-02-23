@@ -83,6 +83,10 @@ class Default(protocol.RSEProtocol):
                 path = lfn['path'] if 'path' in lfn and lfn['path'] else self._get_path(scope=scope, name=name)
                 if self.attributes['scheme'] != 'root' and path.startswith('/'):  # do not modify path if it is root
                     path = path[1:]
+                if re.match('\w+://', path):  # This is already a URL
+                    pfns['%s:%s' % (scope, name)] = path
+                else:
+                    pfns['%s:%s' % (scope, name)] = ''.join([self.attributes['scheme'], '://', hostname, ':', str(self.attributes['port']), web_service_path, pref$
                 pfns['%s:%s' % (scope, name)] = ''.join([self.attributes['scheme'], '://', hostname, ':', str(self.attributes['port']), web_service_path, prefix, path])
 
         return pfns
