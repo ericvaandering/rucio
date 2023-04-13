@@ -41,7 +41,7 @@ def get_stomp_brokers(brokers, port, use_ssl, vhost, reconnect_attempts, ssl_key
                                     use_ssl=False,
                                     vhost=vhost,
                                     timeout=timeout,
-                                    heartbeats=(0, 1000),
+                                    heartbeats=(0, 10000),
                                     reconnect_attempts_max=reconnect_attempts))
         else:
             conns.append(Connection(host_and_ports=[(broker, port)],
@@ -50,6 +50,6 @@ def get_stomp_brokers(brokers, port, use_ssl, vhost, reconnect_attempts, ssl_key
                                     ssl_cert_file=ssl_cert_file,
                                     vhost=vhost,
                                     timeout=timeout,
-                                    heartbeats=(0, 1000),
+                                    heartbeats=(0, 10000),
                                     reconnect_attempts_max=reconnect_attempts))
     return conns
