@@ -97,6 +97,7 @@ def run_once(
         "bb8", "max_rse_rebalance_volume", default=500 * 1e9
     )
     min_total = config_get_float("bb8", "min_total", default=20 * 1e9)
+    total_source = config_get_float("bb8","total_source",default="static")
     payload_cnt = list_payload_counts(
         executable=DAEMON_NAME, older_than=600, hash_executable=None, session=None
     )
@@ -145,7 +146,7 @@ def run_once(
                 usage_dict[item["source"]] = {
                     "used": item["used"],
                     "free": item["free"],
-                    "total": item["total"],
+                    "total_source": item["total_source"],
                 }
 
             try:
@@ -153,11 +154,11 @@ def run_once(
                     usage_dict["rucio"]["used"] - usage_dict["expired"]["used"]
                 )
                 rse["secondary"] = usage_dict["expired"]["used"]
-                rse["total"] = (
-                    usage_dict["storage"]["total"]
+                rse["total_source"] = (
+                    usage_dict["storage"]["total_source"]
                     - usage_dict["min_free_space"]["used"]
                 )
-                rse["ratio"] = float(rse["primary"]) / float(rse["total"])
+                rse["ratio"] = float(rse["primary"]) / float(rse["total_source"])
             except KeyError as err:
                 logger(
                     logging.ERROR,
@@ -168,7 +169,7 @@ def run_once(
                 break
             total_primary += rse["primary"]
             total_secondary += rse["secondary"]
-            total_total += float(rse["total"])
+            total_total += float(rse["total_source"])
             rse["receive_volume"] = 0  # Already rebalanced volume in this run
             global_ratio = float(total_primary) / float(total_total)
             logger(logging.INFO, "Global ratio: %f" % (global_ratio))
@@ -205,12 +206,12 @@ def run_once(
             logging.DEBUG, "Excluding RSEs as destination which are too small by size:"
         )
         for des in rses_under_ratio:
-            if des["total"] < min_total:
+            if des["total_source"] < min_total:
                 logger(logging.DEBUG, "Excluding %s", des["rse"])
                 rses_under_ratio.remove(des)
         logger(logging.DEBUG, "Excluding RSEs as sources which are too small by size:")
         for src in rses_over_ratio:
-            if src["total"] < min_total:
+            if src["total_source"] < min_total:
                 logger(logging.DEBUG, "Excluding %s", src["rse"])
                 rses_over_ratio.remove(src)
         logger(
