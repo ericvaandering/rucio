@@ -310,6 +310,37 @@ def _use_tokens(transfer_hop: "DirectTransfer"):
             return False
     return True
 
+def _get_source_scope_for_tokens(fileurl, rws, logger):
+    
+    file_path = urlparse(fileurl).path
+
+    path_parts = file_path.split('/')
+    
+    # Find the last index of 'store'
+    try:
+        store_index = len(path_parts) - 1 - path_parts[::-1].index('store')
+        # Join the path back up to the last 'store'
+        return '/'.join(path_parts[:store_index + 1])
+    except ValueError:
+        return "Directory 'store' not found in the path." 
+
+def _get_destination_scope_for_tokens(fileurl, rws, logger):
+
+    file_path = urlparse(fileurl).path
+
+    if rws.scope.external == "cms":
+        dst_path = '/'.join(file_path.split('/')[:-2]) + '/'
+
+    # if the scope prefix is "user." or "group.", we need to remove the last 3 parts of the path
+    elif rws.scope.external.startswith("user.") or rws.scope.external.startswith("group."):
+        dst_path = '/'.join(file_path.split('/')[:-3]) + '/'
+
+    else:
+        dst_path = file_path
+        logger(logging.WARNING, 'Could not determine the dataset scope for %s', transfer.dest_url + ' ' + rws.scope.external)
+
+    return dst_path
+
 
 def build_job_params(
         transfer_path: list["DirectTransfer"],
@@ -1027,14 +1058,17 @@ class FTS3Transfertool(Transfertool):
             t_file['source_tokens'] = []
             for source in transfer.sources:
                 src_audience = determine_audience_for_rse(rse_id=source.rse.id)
-                src_scope = determine_scope_for_rse(rse_id=source.rse.id, scopes=['storage.read'], extra_scopes=['offline_access'])
+                src_path = _get_source_scope_for_tokens(transfer.source_url(source), rws, self.logger)
+                src_scope = determine_scope_for_rse(rse_id=source.rse.id, scopes=['storage.read'], extra_scopes=['offline_access'], file_path=src_path)
                 t_file['source_tokens'].append(request_token(src_audience, src_scope))
 
             dst_audience = determine_audience_for_rse(transfer.dst.rse.id)
             # FIXME: At the time of writing, StoRM requires `storage.read` in
             # order to perform a stat operation.
-            dst_scope = determine_scope_for_rse(transfer.dst.rse.id, scopes=['storage.modify', 'storage.read'], extra_scopes=['offline_access'])
+            dst_path = _get_destination_scope_for_tokens(transfer.dest_url, rws, self.logger)
+            dst_scope = determine_scope_for_rse(transfer.dst.rse.id, scopes=['storage.modify', 'storage.read'], extra_scopes=['offline_access'], file_path=dst_path)
             t_file['destination_tokens'] = [request_token(dst_audience, dst_scope)]
+            # self.logger(logging.WARNING, 'Using tokens for transfer %s', t_file)
 
         if isinstance(self.scitags_exp_id, int):
             activity_id = self.scitags_activity_ids.get(rws.activity)
@@ -1096,6 +1130,14 @@ class FTS3Transfertool(Transfertool):
         # bulk submission
         params_dict = {'files': files, 'params': job_params}
         params_str = json.dumps(params_dict, cls=APIEncoder)
+
+        try:
+            myfile = files[0]
+            if myfile['activity'] == 'Debug':
+                self.logger(logging.WARNING, "Params: %s", params_str)
+
+        except Exception as error:
+            self.logger(logging.WARNING, "Could not print params: %s", str(error))
 
         post_result = None
         stopwatch = Stopwatch()
