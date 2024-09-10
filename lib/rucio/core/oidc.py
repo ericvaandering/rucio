@@ -151,6 +151,8 @@ def request_token(audience: str, scope: str, use_cache: bool = True) -> Optional
 
     if use_cache:
         _token_cache_set(key, token)
+    else:
+        METRICS.counter('token_cache.bypass').inc()
 
     return token
 
