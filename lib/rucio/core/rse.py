@@ -1843,6 +1843,10 @@ def determine_audience_for_rse(rse_id: str) -> str:
     # FIXME: At the time of writing, there does not appear to be a common
     # agreement on how sites will configure their storages.  Rucio had requested
     # that the protocol hostname be sufficient, but this may not come to pass.
+    use_wlcg_audience = get_rse_attribute(rse_id, 'use_wlcg_audience')
+    if use_wlcg_audience:
+        return 'https://wlcg.cern.ch/jwt/v1/any'
+
     filtered_hostnames = {p['hostname']
                           for p in rse_protocols['protocols']
                           if p['scheme'] == 'davs'}
@@ -1853,11 +1857,16 @@ def determine_scope_for_rse(
     rse_id: str,
     scopes: Iterable[str],
     extra_scopes: Optional[Iterable[str]] = None,
+    file_path: Optional[str] = None,
 ) -> str:
     """Construct the Scope claim for an RSE."""
     if extra_scopes is None:
         extra_scopes = []
     rse_protocols = get_rse_protocols(rse_id)
+    base_path = get_rse_attribute(rse_id, 'oidc_base_path', use_cache=False)
+    if file_path is not None and base_path is not None:
+        file_path = file_path.removeprefix(base_path)
+
     filtered_prefixes = set()
     for protocol in rse_protocols['protocols']:
         # Token support is exclusive to WebDAV.
@@ -1868,8 +1877,20 @@ def determine_scope_for_rse(
         # a base which should be removed from the prefix (in order for '/' to
         # mean the entire resource associated with that issuer).
         prefix = protocol['prefix']
-        if base_path := get_rse_attribute(rse_id, RseAttr.OIDC_BASE_PATH):
+        if base_path is not None:
             prefix = prefix.removeprefix(base_path)
         filtered_prefixes.add(prefix)
-    all_scopes = [f'{s}:{p}' for s in scopes for p in filtered_prefixes] + list(extra_scopes)
+    if file_path is None:
+        all_scopes = [f'{s}:{p}' for s in scopes for p in filtered_prefixes] + list(extra_scopes)
+    else:
+        # Do exactly as above, except if the scope is `storage.modify`, then use
+        # the (masked) file path instead of the RSE prefix.
+        all_scopes = []
+        for s in scopes:
+            for p in filtered_prefixes:
+                if s == 'storage.modify' or s == 'storage.read':
+                    all_scopes.append(f'{s}:{file_path}')
+                else:
+                    all_scopes.append(f'{s}:{file_path}')
+        all_scopes.extend(list(extra_scopes))
     return ' '.join(sorted(all_scopes))
